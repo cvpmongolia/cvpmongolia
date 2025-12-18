@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVP туслагч</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        color: white;
+        padding-top: 32px; /* Account for sticky banner */
+      }
+      
+      /* Sliding banner animation */
+      @keyframes slide {
+        0% {
+          transform: translateX(100vw);
+        }
+        71.4% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+      
+      .animate-slide {
+        animation: slide 35s linear infinite;
+      }
+      
+      /* Custom styled radio buttons */
+      .radio-group {
+        display: flex;
+        gap: 0.75rem;
+        width: 100%;
+      }
+      
+      .radio-group input[type="radio"] {
+        display: none;
+      }
+      
+      .radio-group label {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid transparent;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.1s ease;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      
+      /* Default border colors for Yes/No buttons */
+      .radio-group label[for$="-yes"] {
+        border-color: #22c55e;
+        color: #22c55e;
+      }
+      
+      .radio-group label[for$="-no"] {
+        border-color: #f43f5e;
+        color: #f43f5e;
+      }
+      
+      .radio-group label:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+      }
+      
+      /* Yes button - selected state */
+      .radio-group input[type="radio"][value="yes"]:checked + label {
+        background: #22c55e;
+        border-color: #22c55e;
+        color: white;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+      }
+      
+      /* Yes button - deselected state (when No is selected) */
+      .radio-group input[type="radio"][value="no"]:checked ~ input[type="radio"][value="yes"] + label {
+        background: transparent;
+        border-color: #22c55e;
+        color: #22c55e;
+      }
+      
+      /* No button - selected state */
+      .radio-group input[type="radio"][value="no"]:checked + label {
+        background: #f43f5e;
+        border-color: #f43f5e;
+        color: white;
+        box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4);
+      }
+      
+      /* No button - deselected state (when Yes is selected) */
+      .radio-group input[type="radio"][value="yes"]:checked ~ input[type="radio"][value="no"] + label {
+        background: transparent;
+        border-color: #f43f5e;
+        color: #f43f5e;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex bg-gray-900">
+    <!-- Trading Session Banner -->
+    <div id="session-banner" class="fixed top-0 left-0 right-0 h-8 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 shadow-lg z-[200] overflow-hidden flex items-center">
+      <div id="session-banner-text" class="whitespace-nowrap text-white font-medium text-sm py-1.5 inline-block animate-slide">
+        <!-- Text will be populated by JavaScript -->
+      </div>
+      <button id="close-banner-btn" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-white hover:bg-white/20 rounded transition-all" title="Хаах">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Clear Memory Button (Top Right) -->
+    <button id="clear-memory-btn" class="group fixed top-12 right-4 z-50 px-4 py-2 rounded-lg backdrop-blur-sm transition-all shadow-lg bg-transparent hover:bg-red-600/80 hover:px-4 px-2 duration-300">
+      <img src="./assets/trash-bin.svg" alt="Clear" class="w-6 h-6 group-hover:hidden transition-all">
+      <span class="hidden group-hover:inline text-white text-sm font-semibold whitespace-nowrap">Санах ой цэвэрлэх</span>
+    </button>
+    
+    <!-- Sticky Left Panel -->
+    <div class="left-icon-panel fixed left-0 top-8 h-[calc(100vh-32px)] w-40 bg-white/20 backdrop-blur-md shadow-lg border-r border-white/30 p-4 flex flex-col gap-3 overflow-y-auto">
+      <h3 class="text-white font-semibold text-sm mb-2 text-center">Зэвсэг</h3>
+      
+      <!-- Row 1 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="1_up_level1">
+          <img src="./assets/1_up_level1.png" alt="Up Level 1" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="2_up_level1_broken">
+          <img src="./assets/2_up_level1_broken.png" alt="Up Level 1 Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 2 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="1_down_level1">
+          <img src="./assets/1_down_level1.png" alt="Down Level 1" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="2_down_level1_broken">
+          <img src="./assets/2_down_level1_broken.png" alt="Down Level 1 Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 3 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="3_up_level2">
+          <img src="./assets/3_up_level2.png" alt="Up Level 2" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="4_up_level2_broken">
+          <img src="./assets/4_up_level2_broken.png" alt="Up Level 2 Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 4 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="3_down_level2">
+          <img src="./assets/3_down_level2.png" alt="Down Level 2" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="4_down_level2_broken">
+          <img src="./assets/4_down_level2_broken.png" alt="Down Level 2 Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 5 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="5_up_wpoc">
+          <img src="./assets/5_up_wpoc.png" alt="Up WPOC" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="6_up_wpoc_broken">
+          <img src="./assets/6_up_wpoc_broken.png" alt="Up WPOC Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 6 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="5_down_wpoc">
+          <img src="./assets/5_down_wpoc.png" alt="Down WPOC" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="6_down_wpoc_broken">
+          <img src="./assets/6_down_wpoc_broken.png" alt="Down WPOC Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 7 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="7_up_test">
+          <img src="./assets/7_up_test.png" alt="Up Test" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="8_up_test_broken">
+          <img src="./assets/8_up_test_broken.png" alt="Up Test Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 8 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="7_down_test">
+          <img src="./assets/7_down_test.png" alt="Down Test" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="8_down_test_broken">
+          <img src="./assets/8_down_test_broken.png" alt="Down Test Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 9 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="9_up_zone">
+          <img src="./assets/9_up_zone.png" alt="Up Zone" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="9_down_zone">
+          <img src="./assets/9_down_zone.png" alt="Down Zone" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 10 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="10_up_wbp">
+          <img src="./assets/10_up_wbp.png" alt="Up WBP" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="11_up_wbp_broken">
+          <img src="./assets/11_up_wbp_broken.png" alt="Up WBP Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 11 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="10_down_wbp">
+          <img src="./assets/10_down_wbp.png" alt="Down WBP" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="11_down_wbp_broken">
+          <img src="./assets/11_down_wbp_broken.png" alt="Down WBP Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 12 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="12_up_medium">
+          <img src="./assets/12_up_medium.png" alt="Up Medium" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="13_up_medium_broken">
+          <img src="./assets/13_up_medium_broken.png" alt="Up Medium Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+      
+      <!-- Row 13 -->
+      <div class="flex gap-2 justify-center">
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="12_down_medium">
+          <img src="./assets/12_down_medium.png" alt="Down Medium" class="w-10 h-10 pointer-events-none">
+        </div>
+        <div class="icon-item cursor-grab active:cursor-grabbing bg-white/60 rounded-lg p-2 hover:bg-white/70 transition-all" draggable="true" data-icon="13_down_medium_broken">
+          <img src="./assets/13_down_medium_broken.png" alt="Down Medium Broken" class="w-10 h-10 pointer-events-none">
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex-1 flex items-center justify-center ml-40">
+      <div class="container max-w-4xl bg-white/30 backdrop-blur-md shadow-lg rounded-lg p-8 font-mono text-base transition-all ease-in-out delay-150">
+        
+        <!-- Minimized State Button (initially hidden) -->
+        <button id="maximize-btn" class="hidden w-full mb-6 p-3 bg-white/20 backdrop-blur-sm rounded-lg text-white font-semibold hover:bg-white/30 transition-all">
+          Тикер сонгох
+        </button>
+        
+        <!-- Expanded Header Section -->
+        <div id="header-section">
+          <h1 class="text-3xl font-bold text-center mb-8 text-white drop-shadow-lg">CVP-Туслагч</h1>
+          
+          <!-- Ticker Selection -->
+          <div class="mb-6 p-4 bg-white/20 backdrop-blur-sm rounded-lg relative">
+            <label class="block text-white font-semibold mb-3">Тикер сонгох:</label>
+            <div class="flex flex-wrap gap-4" id="ticker-checkboxes">
+              <!-- Checkboxes will be dynamically generated here -->
+            </div>
+            
+            <!-- Minimize Button -->
+            <button id="minimize-btn" class="absolute top-3 right-3 px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-white text-sm font-semibold transition-all">
+              Хураах
+            </button>
+          </div>
+          
+          <hr class="border-white/30 mb-6">
+        </div>
+        
+        <!-- Tables will be dynamically generated here -->
+        <div id="tables-container"></div>
+      </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-md w-full mx-4 border border-white/20">
+        <h2 class="text-xl font-bold text-white mb-4">Анхааруулга</h2>
+        <p class="text-white/90 mb-6">Та вебсайтын санах ойг цэвэрлэх гэж байна. Хадгалагдсан тохиргоонууд бүгд устахыг анхаарна уу.</p>
+        <div class="flex gap-3 justify-end">
+          <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded transition-all">
+            Болих
+          </button>
+          <button id="modal-ok-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded transition-all">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Delete Expectation Confirmation Modal -->
+    <div id="delete-expectation-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-md w-full mx-4 border border-white/20">
+        <h2 id="delete-expectation-title" class="text-xl font-bold text-white mb-4"></h2>
+        <p class="text-white/90 mb-6">CVP Арилжааны зөвлөмж харахын тулд шинээр хүлээлт гаргах шаардлагатай болно.</p>
+        <div class="flex gap-3 justify-end">
+          <button id="delete-expectation-cancel-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded transition-all">
+            Болих
+          </button>
+          <button id="delete-expectation-ok-btn" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded transition-all">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Delete Ticker Confirmation Modal -->
+    <div id="delete-ticker-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-lg w-full mx-4 border border-white/20">
+        <h2 id="delete-ticker-title" class="text-xl font-bold text-white mb-4"></h2>
+        <p class="text-white/90 mb-6">Энэ тикерийн бүх хадгалагдсан өгөгдлийг (хүлээлт, level-ийн байршил) шинээр эхлүүлэх бол үргэлжлүүлнэ.</p>
+        <div class="flex gap-3 justify-end">
+          <button id="delete-ticker-cancel-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded transition-all">
+            Болих
+          </button>
+          <button id="delete-ticker-ok-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded transition-all">
+            Устгах
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Questions Modal -->
+    <div id="questions-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto py-8">
+      <div class="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-7xl w-full mx-4 border border-white/20 my-8">
+        <h2 id="questions-modal-title" class="text-2xl font-bold text-white mb-6"></h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto pr-2">
+          <!-- Question 1 -->
+          <div class="bg-white/10 rounded-lg p-4 flex flex-col">
+            <h3 class="text-lg font-bold mb-3" style="color: #FFC107;">Асуулт 1.</h3>
+            <div class="text-white/90 mb-3 text-sm space-y-2 flex-grow">
+              <p class="font-semibold" style="color: #FFC107;">+3 TF буюу Weekly Timeframe-н констрактор</p>
+              <p>1. LVL 1 <span style="color: #87CEEB; font-weight: 600;">зүг чиг тодорхой(1)</span>, ба ойр хавьд саад болох <span style="color: #87CEEB; font-weight: 600;">lvl(2)</span> юмуу <span style="color: #87CEEB; font-weight: 600;">zone(3)</span>-ууд ойрхон байхгүй буюу хөдөлгөөний потенциал/боломж байна.</p>
+              <p>2. LVL 1 <span style="color: #87CEEB; font-weight: 600;">тодорхой мөртлөө</span> lvl 2,3,4 дээр хэцүү коррекшн/засварын хөдөлгөөн орсон ч ойр хавьд саад болох <span style="color: #87CEEB; font-weight: 600;">lvl(2)</span> юмуу <span style="color: #87CEEB; font-weight: 600;">zone(3)</span> байхгүй/хол байгаа буюу хөдөлгөөний потенциал байна.</p>
+              <p class="font-semibold mt-3" style="color: #FFC107;">+3 TF буюу Weekly Timeframe-н профайл</p>
+              <p>1. <span style="color: #87CEEB; font-weight: 600;">Profile(4)</span>-ийн ерөнхий зүг чиг Констракорын LVL 1 дагуу байна.</p>
+              <p>2. Профайл талаас <span style="color: #87CEEB; font-weight: 600;">imbalance-тай шилжилт(5)</span> үүсээгүй, өргөтгөлийн мөнгөний хуваарилалт хэвийн явагдаж байна.</p>
+              <p>3. Кластерийн хэмжээнд 2 талруу <span style="color: #87CEEB; font-weight: 600;">StoppingAction(6)</span> үүсээгүй ба флат/хажуугийн хөдөлгөөн үүсгэсэн шинж тэмдэг байхгүй байна.</p>
+            </div>
+            <div class="radio-group mt-auto">
+              <input type="radio" name="q1" value="yes" id="q1-yes">
+              <label for="q1-yes">Тийм</label>
+              <input type="radio" name="q1" value="no" id="q1-no">
+              <label for="q1-no">Үгүй</label>
+            </div>
+          </div>
+          
+          <!-- Question 2 -->
+          <div class="bg-white/10 rounded-lg p-4 flex flex-col">
+            <h3 class="text-lg font-bold mb-3" style="color: #87CEEB;">Асуулт 2.</h3>
+            <div class="text-white/90 mb-3 text-sm flex-grow">
+              <p><span style="color: #d15ae6; font-weight: 600;">+2 TF буюу Daily Timeframe</span> маань <span style="color: #C0C0C0; font-weight: 600;">+4Monthly</span> эсвэл <span style="color: #FFC107; font-weight: 600;">+3Weekly TF</span>-ийн ямар нэгэн <span style="color: #87CEEB; font-weight: 600;">lvl(1)</span> эсвэд <span style="color: #87CEEB; font-weight: 600;">Zone(2)</span> руу орж ирсэн байна уу?</p>
+            </div>
+            <div class="radio-group mt-auto">
+              <input type="radio" name="q2" value="yes" id="q2-yes">
+              <label for="q2-yes">Тийм</label>
+              <input type="radio" name="q2" value="no" id="q2-no">
+              <label for="q2-no">Үгүй</label>
+            </div>
+          </div>
+          
+          <!-- Question 3 -->
+          <div class="bg-white/10 rounded-lg p-4 flex flex-col">
+            <h3 class="text-lg font-bold mb-3" style="color: #d15ae6;">Асуулт 3.</h3>
+            <div class="text-white/90 mb-3 text-sm space-y-2 flex-grow">
+              <p class="font-semibold" style="color: #d15ae6;">+2 TF буюу Daily Timeframe-н констрактор</p>
+              <p>1. LVL 1 <span style="color: #87CEEB; font-weight: 600;">зүг чиг тодорхой(1)</span>, ба ойр хавьд саад болох <span style="color: #87CEEB; font-weight: 600;">lvl(2)</span> юмуу <span style="color: #87CEEB; font-weight: 600;">zone(3)</span>-ууд ойрхон байхгүй буюу хөдөлгөөний потенциал/боломж байна.</p>
+              <p>2. LVL 1 <span style="color: #87CEEB; font-weight: 600;">тодорхой мөртлөө</span> lvl 2,3,4 дээр хэцүү коррекшн/засварын хөдөлгөөн орсон ч ойр хавьд саад болох <span style="color: #87CEEB; font-weight: 600;">lvl(2)</span> юмуу <span style="color: #87CEEB; font-weight: 600;">zone(3)</span> байхгүй/хол байгаа буюу хөдөлгөөний потенциал байна.</p>
+              <p class="font-semibold mt-3" style="color: #d15ae6;">+2 TF буюу Daily Timeframe-н профайл</p>
+              <p>1. <span style="color: #87CEEB; font-weight: 600;">Profile(4)</span>-ийн ерөнхий зүг чиг Констракорын LVL 1 дагуу байна.</p>
+              <p>2. Профайл талаас <span style="color: #87CEEB; font-weight: 600;">imbalance-тай шилжилт(5)</span> үүсээгүй, өргөтгөлийн мөнгөний хуваарилалт хэвийн явагдаж байна.</p>
+              <p>3. Кластерийн хэмжээнд 2 талруу <span style="color: #87CEEB; font-weight: 600;">StoppingAction(6)</span> үүсээгүй ба флат/хажуугийн хөдөлгөөн үүсгэсэн шинж тэмдэг байхгүй байна.</p>
+            </div>
+            <div class="radio-group mt-auto">
+              <input type="radio" name="q3" value="yes" id="q3-yes">
+              <label for="q3-yes">Тийм</label>
+              <input type="radio" name="q3" value="no" id="q3-no">
+              <label for="q3-no">Үгүй</label>
+            </div>
+          </div>
+          
+          <!-- Question 4 -->
+          <div class="bg-white/10 rounded-lg p-4 flex flex-col">
+            <h3 class="text-lg font-bold mb-3" style="color: #F43F5E;">Асуулт 4.</h3>
+            <div class="text-white/90 mb-3 text-sm space-y-2 flex-grow">
+              <p class="font-semibold"><span style="color: #87CEEB; font-weight: 600;">Зүг чиг тодорхой</span>, саад болох зүйлс/lvl-үүд байхгүй байна.</p>
+              <p class="font-semibold mt-2">+1 TF буюу <span style="color: #F43F5E;">H1</span>(<span style="color: #43A047;">H4</span>)-н констрактор</p>
+              <p>1. LVL 1 <span style="color: #87CEEB; font-weight: 600;">зүг чиг тодорхой(1)</span>, ба ойр хавьд саад болох <span style="color: #87CEEB; font-weight: 600;">lvl(2)</span> юмуу <span style="color: #87CEEB; font-weight: 600;">zone(3)</span>-ууд ойрхон байхгүй буюу хөдөлгөөний потенциал/боломж байна.</p>
+              <p>2. LVL 1 <span style="color: #87CEEB; font-weight: 600;">тодорхой мөртлөө</span> lvl 2,3,4 дээр хэцүү коррекшн/засварын хөдөлгөөн орсон ч ойр хавьд саад болох <span style="color: #87CEEB; font-weight: 600;">lvl(2)</span> юмуу <span style="color: #87CEEB; font-weight: 600;">zone(3)</span> байхгүй/хол байгаа буюу хөдөлгөөний потенциал байна.</p>
+              <p class="font-semibold mt-3">+1 TF буюу <span style="color: #F43F5E;">H1</span>(<span style="color: #43A047;">H4</span>) Timeframe-н профайл</p>
+              <p>1. <span style="color: #87CEEB; font-weight: 600;">Profile(4)</span>-ийн ерөнхий зүг чиг Констракорын LVL 1 дагуу байна.</p>
+              <p>2. Профайл талаас <span style="color: #87CEEB; font-weight: 600;">imbalance-тай шилжилт(5)</span> үүсээгүй, өргөтгөлийн мөнгөний хуваарилалт хэвийн явагдаж байна.</p>
+              <p>3. Кластерийн хэмжээнд 2 талруу <span style="color: #87CEEB; font-weight: 600;">StoppingAction(6)</span> үүсээгүй ба флат/хажуугийн хөдөлгөөн үүсгэсэн шинж тэмдэг байхгүй байна.</p>
+            </div>
+            <div class="radio-group mt-auto">
+              <input type="radio" name="q4" value="yes" id="q4-yes">
+              <label for="q4-yes">Тийм</label>
+              <input type="radio" name="q4" value="no" id="q4-no">
+              <label for="q4-no">Үгүй</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex gap-4 justify-end mt-6 pt-4 border-t border-white/20">
+          <button id="questions-cancel-btn" class="px-10 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all text-lg">
+            Болих
+          </button>
+          <button id="questions-submit-btn" class="px-10 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all text-lg">
+            Хадгалах
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <script src="./expectation-advice.js"></script>
+    <script src="./component.js"></script>
+    <script src="./script.js"></script>
+  </body>
+  
+</html>
