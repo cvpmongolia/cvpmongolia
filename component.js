@@ -18,10 +18,21 @@ class TradingTable {
     const titleSection = document.createElement('div');
     titleSection.className = 'flex justify-between items-center mb-4';
     
+    const titleWrapper = document.createElement('div');
+    titleWrapper.className = 'flex items-center gap-3';
+    
     const title = document.createElement('h2');
     title.className = 'text-xl font-semibold drop-shadow-md';
     title.style.color = this.color;
     title.textContent = this.fullName;
+    
+    const timestampText = document.createElement('span');
+    timestampText.className = 'ticker-timestamp text-sm text-white/70 italic';
+    timestampText.setAttribute('data-ticker', this.ticker);
+    // Timestamp will be populated by JavaScript
+    
+    titleWrapper.appendChild(title);
+    titleWrapper.appendChild(timestampText);
     
     const trashBtn = document.createElement('button');
     trashBtn.className = 'delete-ticker-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2 hover:bg-white/10 rounded-lg';
@@ -29,7 +40,7 @@ class TradingTable {
     trashBtn.setAttribute('title', `${this.fullName} тикерийн ажлын талбарыг цэвэрлэх`);
     trashBtn.innerHTML = '<img src="./assets/trash-bin.svg" alt="Delete Ticker" class="w-5 h-5">';
     
-    titleSection.appendChild(title);
+    titleSection.appendChild(titleWrapper);
     titleSection.appendChild(trashBtn);
     tableWrapper.appendChild(titleSection);
     
