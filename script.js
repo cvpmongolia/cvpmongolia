@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupExpectationButtons();
   restoreIcons(); // Restore icons after tables are created
   restoreExpectationStates(); // Restore expectation UI states
-  startSessionTimer(); // Start the trading session countdown
   setupBannerClose(); // Setup banner close button
   startTimestampUpdater(); // Start periodic timestamp updates
 });
@@ -1161,7 +1160,7 @@ function deleteTickerData(ticker) {
 }
 
 // ============================================
-// TRADING SESSION TIMER
+// BANNER CLOSE FUNCTIONALITY
 // ============================================
 
 function setupBannerClose() {
@@ -1188,164 +1187,4 @@ function setupBannerClose() {
       }
     });
   }
-}
-
-function getChicagoTime() {
-  // Get current time and convert to Chicago timezone properly
-  const now = new Date();
-  
-  // Get Chicago time using proper timezone conversion
-  // This creates a date formatter that outputs in Chicago timezone
-  const chicagoTimeString = now.toLocaleString('en-US', { 
-    timeZone: 'America/Chicago',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-  
-  // Parse the Chicago time string components
-  // Format: "MM/DD/YYYY, HH:mm:ss"
-  const [datePart, timePart] = chicagoTimeString.split(', ');
-  const [month, day, year] = datePart.split('/');
-  const [hours, minutes, seconds] = timePart.split(':');
-  
-  // Create a date object representing this exact time
-  // We'll use this to get hours, minutes, seconds in Chicago time
-  return {
-    hours: parseInt(hours),
-    minutes: parseInt(minutes),
-    seconds: parseInt(seconds),
-    date: parseInt(day),
-    month: parseInt(month),
-    year: parseInt(year)
-  };
-}
-
-function formatTimeRemaining(hours, minutes, seconds) {
-  let parts = [];
-  if (hours > 0) parts.push(`${hours} цаг`);
-  if (minutes > 0) parts.push(`${minutes} минут`);
-  if (seconds > 0 || parts.length === 0) parts.push(`${seconds} секунд`);
-  return parts.join(' ');
-}
-
-function getSessionStatus() {
-  const chicagoTime = getChicagoTime();
-  const hours = chicagoTime.hours;
-  const minutes = chicagoTime.minutes;
-  const seconds = chicagoTime.seconds;
-  const currentTimeInMinutes = hours * 60 + minutes + seconds / 60;
-  
-  // Europe session: 2:00 AM - 6:00 AM (120 - 360 minutes)
-  const euStart = 2 * 60; // 2:00 AM
-  const euEnd = 6 * 60; // 6:00 AM
-  
-  // US session: 8:30 AM - 4:00 PM (510 - 960 minutes)
-  const usStart = 8 * 60 + 30; // 8:30 AM
-  const usEnd = 16 * 60; // 4:00 PM
-  
-  let message = '';
-  
-  if (currentTimeInMinutes >= euStart && currentTimeInMinutes < euEnd) {
-    // During EU session
-    const euOpenedMinutes = currentTimeInMinutes - euStart;
-    const euOpenedHours = Math.floor(euOpenedMinutes / 60);
-    const euOpenedMins = Math.floor(euOpenedMinutes % 60);
-    
-    const usStartMinutes = usStart - currentTimeInMinutes;
-    const usStartHours = Math.floor(usStartMinutes / 60);
-    const usStartMins = Math.floor(usStartMinutes % 60);
-    const usStartSecs = Math.floor((usStartMinutes % 1) * 60);
-    
-    if (euOpenedHours > 0) {
-      message = `Europe session ${euOpenedHours} цаг ${euOpenedMins} минутын өмнө нээгдсэн байна. `;
-    } else {
-      message = `Europe session ${euOpenedMins} минутын өмнө нээгдсэн байна. `;
-    }
-    message += `Америк session нээгдэхэд ${formatTimeRemaining(usStartHours, usStartMins, usStartSecs)} үлдлээ.`;
-    
-  } else if (currentTimeInMinutes >= usStart && currentTimeInMinutes < usEnd) {
-    // During US session
-    const usOpenedMinutes = currentTimeInMinutes - usStart;
-    const usOpenedHours = Math.floor(usOpenedMinutes / 60);
-    const usOpenedMins = Math.floor(usOpenedMinutes % 60);
-    
-    const usCloseMinutes = usEnd - currentTimeInMinutes;
-    const usCloseHours = Math.floor(usCloseMinutes / 60);
-    const usCloseMins = Math.floor(usCloseMinutes % 60);
-    const usCloseSecs = Math.floor((usCloseMinutes % 1) * 60);
-    
-    // Calculate time until next EU session (tomorrow at 2 AM)
-    let nextEuStart = euStart + (24 * 60); // Next day 2 AM
-    const euNextMinutes = nextEuStart - currentTimeInMinutes;
-    const euNextHours = Math.floor(euNextMinutes / 60);
-    
-    if (usOpenedHours > 0) {
-      message = `Америк session ${usOpenedHours} цаг ${usOpenedMins} минутын өмнө нээгдсэн байна. `;
-    } else {
-      message = `Америк session ${usOpenedMins} минутын өмнө нээгдсэн байна. `;
-    }
-    message += `Хаагдахад ${formatTimeRemaining(usCloseHours, usCloseMins, usCloseSecs)} үлдлээ. `;
-    message += `Europe session ${euNextHours} цагийн дараа нээгдэнэ.`;
-    
-  } else {
-    // Before both sessions or between sessions or after US session
-    let nextEuStart;
-    
-    if (currentTimeInMinutes < euStart) {
-      // Before EU session (same day)
-      nextEuStart = euStart - currentTimeInMinutes;
-    } else if (currentTimeInMinutes >= euEnd && currentTimeInMinutes < usStart) {
-      // Between EU and US session
-      nextEuStart = (24 * 60) - currentTimeInMinutes + euStart; // Next day
-    } else {
-      // After US session
-      nextEuStart = (24 * 60) - currentTimeInMinutes + euStart; // Next day
-    }
-    
-    const euHours = Math.floor(nextEuStart / 60);
-    const euMins = Math.floor(nextEuStart % 60);
-    const euSecs = Math.floor((nextEuStart % 1) * 60);
-    
-    // Calculate time until US session start
-    let nextUsStart;
-    if (currentTimeInMinutes < usStart) {
-      // Same day US session
-      nextUsStart = usStart - currentTimeInMinutes;
-    } else {
-      // Next day US session
-      nextUsStart = (24 * 60) - currentTimeInMinutes + usStart;
-    }
-    
-    const usHours = Math.floor(nextUsStart / 60);
-    const usMins = Math.floor(nextUsStart % 60);
-    const usSecs = Math.floor((nextUsStart % 1) * 60);
-    
-    // Show closer session first
-    if (nextUsStart < nextEuStart) {
-      message = `Америк session нээгдэхэд ${formatTimeRemaining(usHours, usMins, usSecs)} үлдлээ. `;
-      message += `Europe session нээгдэхэд ${formatTimeRemaining(euHours, euMins, euSecs)} үлдлээ.`;
-    } else {
-      message = `Europe session нээгдэхэд ${formatTimeRemaining(euHours, euMins, euSecs)} үлдлээ. `;
-      message += `Америк session нээгдэхэд ${formatTimeRemaining(usHours, usMins, usSecs)} үлдлээ.`;
-    }
-  }
-  
-  return message;
-}
-
-function updateSessionBanner() {
-  const bannerText = document.getElementById('session-banner-text');
-  if (bannerText) {
-    bannerText.textContent = getSessionStatus();
-  }
-}
-
-function startSessionTimer() {
-  updateSessionBanner(); // Initial update
-  setInterval(updateSessionBanner, 1000); // Update every second
 }
