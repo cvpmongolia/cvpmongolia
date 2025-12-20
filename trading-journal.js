@@ -3493,7 +3493,7 @@ function generateReportDisplay(dateRange) {
   if (report.isEmpty) {
     reportContent.innerHTML = `
       <div class="text-center py-12">
-        <p class="text-xl text-white/70">📊 Өө. Арилжааны түүх байхгүй байна</p>
+        <p class="text-xl text-white/70">📊 Өө. Арилжааны түүх байхгүй байна.</p>
         <p class="text-sm text-white/50 mt-2">Арилжааны журнал руу орж шинээр хийсэн арилжаагаа бүртгээрэй!</p>
       </div>
     `;
@@ -3543,11 +3543,11 @@ function generateReportDisplay(dateRange) {
           <p class="text-lg font-bold text-red-400">$${fin.avgLoss.toFixed(2)}</p>
         </div>
         <div class="p-4 bg-white/10 rounded-lg">
-          <p class="text-xs text-white/60 mb-1">Хамгийн их ашиг</p>
+          <p class="text-xs text-white/60 mb-1">Хамгийн их ашигтай арилжаа</p>
           <p class="text-lg font-bold text-green-400">$${fin.largestWin.toFixed(2)}</p>
         </div>
         <div class="p-4 bg-white/10 rounded-lg">
-          <p class="text-xs text-white/60 mb-1">Хамгийн их алдагдал</p>
+          <p class="text-xs text-white/60 mb-1">Хамгийн их алдагдалтай арилжаа</p>
           <p class="text-lg font-bold text-red-400">$${fin.largestLoss.toFixed(2)}</p>
         </div>
       </div>
