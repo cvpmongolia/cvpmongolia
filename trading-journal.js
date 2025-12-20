@@ -2178,9 +2178,11 @@ function showQuestionnaire(entry = null) {
   if (journalTitle) {
     if (entry) {
       // Editing mode: show entry number and setup name
-      const entryIndex = journalEntries.findIndex(e => e.id === entry.id) + 1;
+      const totalEntries = journalEntries.length;
+      const entryIndex = journalEntries.findIndex(e => e.id === entry.id);
+      const entryNumber = totalEntries - entryIndex;
       const setupName = setup?.name || 'Unknown Setup';
-      journalTitle.textContent = `${entryIndex}. ${setupName}`;
+      journalTitle.textContent = `${entryNumber}. ${setupName}`;
     } else {
       // Creating mode: show default title
       journalTitle.textContent = 'Арилжааны Журнал';
