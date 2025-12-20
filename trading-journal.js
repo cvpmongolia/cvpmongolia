@@ -20,7 +20,13 @@ const SETUPS = [
   { id: 6, name: 'Test lvl Double Manipulation', questionSetId: 'TEST_LVL' },
   { id: 7, name: 'Test-ийн Manipulation-ий Test-ийн Manipulation', questionSetId: 'TEST_LVL' },
   { id: 8, name: 'Test-ийн Manipulation-ий Test-ийн Double Manipulation', questionSetId: 'TEST_LVL' },
-  { id: 9, name: 'Manipulation дараа Дагаж Орох', questionSetId: 'DAGAJ_OROH' }
+  { id: 9, name: 'Manipulation дараа Дагаж Орох', questionSetId: 'DAGAJ_OROH' },
+  { id: 10, name: 'Block-ын Zone-оос Дагаж орох', questionSetId: 'BLOCK_ZONE' },
+  { id: 11, name: 'Block Гаралтын дараа Дагаж Орох', questionSetId: 'BLOCK_EXIT' },
+  { id: 12, name: 'Эсрэг тоглогчийн Test lvl Break орсны дараа Дагаж Орох', questionSetId: 'TEST_BREAK' },
+  { id: 13, name: 'Эсрэг тоглогчийн WPOC lvl Break орсны дараа Дагаж Орох', questionSetId: 'WPOC_BREAK' },
+  { id: 14, name: 'Counter Trend Дагуу Орох', questionSetId: 'COUNTER_TREND' },
+  { id: 15, name: 'Counter Trend араас Дагаж Орох', questionSetId: 'COUNTER_TREND' }
 ];
 
 // Ticker colors (matching table component colors)
@@ -538,6 +544,834 @@ const QUESTION_SETS = {
       type: 'text',
       optional: true
     }
+  ],
+
+  // Questions for WPOC Блокийн zone (setup 10)
+  BLOCK_ZONE: [
+    {
+      id: 'ticker',
+      label: 'Тикер сонгох',
+      type: 'select',
+      options: ['NQ', 'ES', 'GC', '6E', 'BTC', 'CL'],
+      default: 'NQ'
+    },
+    {
+      id: 'weekly',
+      label: 'Weekly хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'daily',
+      label: 'Daily хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'q1_profile',
+      label: 'Market Profile Хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q2_constructor',
+      label: 'Constructor хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_block_profile_shift',
+      label: 'Блокын Zone руу Market Profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_block_initiative_shift',
+      label: 'Санаачлага ${direction} тал руу солигдсон эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q_block_profile_expectation',
+      label: 'Market Profile Хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_block_constructor_expectation',
+      label: 'Constructor хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q3_wave',
+      label: 'Wave profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Үгүй'
+    },
+    {
+      id: 'q4_impulse',
+      label: 'Impulse profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q5_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction']
+    },
+    {
+      id: 'q6_exit_cluster',
+      label: 'Гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction', 'Байхгүй (Single bar Manipulation)']
+    },
+    {
+      id: 'q7_volume_spike',
+      label: 'Lvl-ийн цаана оролтын cluster тухайн wave дотор багтах топ 3 volume spike орсон',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q8_exit_volume',
+      label: 'Гаралтын cluster-ийн volume оролтын барын өмнөх бараас/дунджаас илүү',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q9_volume_decrease',
+      label: 'Lvl рүү тулж очсон cluster-уудын volume ерөнхийдөө буурч ажиглагдсан',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_wave',
+      label: 'Wave profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Үгүй'
+    },
+    {
+      id: 'q_connection_impulse',
+      label: 'Impulse profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction']
+    },
+    {
+      id: 'q_connection_exit_cluster',
+      label: 'Гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction', 'Байхгүй (Single bar Manipulation)']
+    },
+    {
+      id: 'q_connection_volume_spike',
+      label: 'Lvl-ийн цаана оролтын cluster тухайн wave дотор багтах топ 3 volume spike орсон',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_exit_volume',
+      label: 'Гаралтын cluster-ийн volume оролтын барын өмнөх бараас/дунджаас илүү',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_volume_decrease',
+      label: 'Lvl рүү тулж очсон cluster-уудын volume ерөнхийдөө буурч ажиглагдсан',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'session',
+      label: 'Market session',
+      type: 'radio',
+      options: ['Asia', 'Europe', 'US'],
+      optional: true
+    },
+    {
+      id: 'risk',
+      label: 'Risk',
+      type: 'number',
+      optional: true,
+      placeholder: 'Жишээ нь: 100$'
+    },
+    {
+      id: 'reward',
+      label: 'Reward',
+      type: 'number',
+      optional: true,
+      placeholder: '300$, 500$'
+    },
+    {
+      id: 'risk_reward',
+      label: 'R/R',
+      type: 'number',
+      optional: true
+    },
+    {
+      id: 'safe_rule',
+      label: 'Safe-ийн дүрэм өгсөн эсэх (1:1 Break-even)',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      optional: true
+    },
+    {
+      id: 'result',
+      label: 'Үр дүн',
+      type: 'radio',
+      options: ['Win', 'Loss'],
+      optional: true
+    },
+    {
+      id: 'psychology',
+      label: 'Арилжааны өмнөх сэтгэлзүй',
+      type: 'text',
+      optional: true
+    },
+    {
+      id: 'lesson',
+      label: 'Дараа юун дээр анхаарах',
+      type: 'text',
+      optional: true
+    }
+  ],
+
+  // Questions for Block Гаралтын дараа Дагаж Орох (setup 11)
+  BLOCK_EXIT: [
+    {
+      id: 'ticker',
+      label: 'Тикер сонгох',
+      type: 'select',
+      options: ['NQ', 'ES', 'GC', '6E', 'BTC', 'CL'],
+      default: 'NQ'
+    },
+    {
+      id: 'weekly',
+      label: 'Weekly хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'daily',
+      label: 'Daily хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'q1_profile',
+      label: 'Market Profile Хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q2_constructor',
+      label: 'Constructor хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_block_exit_impulse',
+      label: 'Блокын гаралтын Impulse profile Хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_block_exit_cluster',
+      label: 'Блокын гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'Энгийн түлхэлт', 'StoppingAction']
+    },
+    {
+      id: 'q_small_setup_manipulation',
+      label: '+1 TF дээрх блокны дээд хүрээтэй ойр блокны Manipulation авсан эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q_connection_wave',
+      label: 'Wave profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Үгүй'
+    },
+    {
+      id: 'q_connection_impulse',
+      label: 'Impulse profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction']
+    },
+    {
+      id: 'q_connection_exit_cluster',
+      label: 'Гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction', 'Байхгүй (Single bar Manipulation)']
+    },
+    {
+      id: 'q_connection_volume_spike',
+      label: 'Lvl-ийн цаана оролтын cluster тухайн wave дотор багтах топ 3 volume spike орсон',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_exit_volume',
+      label: 'Гаралтын cluster-ийн volume оролтын барын өмнөх бараас/дунджаас илүү',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q_connection_volume_decrease',
+      label: 'Lvl рүү тулж очсон cluster-уудын volume ерөнхийдөө буурч ажиглагдсан',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'session',
+      label: 'Market session',
+      type: 'radio',
+      options: ['Asia', 'Europe', 'US'],
+      optional: true
+    },
+    {
+      id: 'risk',
+      label: 'Risk',
+      type: 'number',
+      optional: true,
+      placeholder: 'Жишээ нь: 100$'
+    },
+    {
+      id: 'reward',
+      label: 'Reward',
+      type: 'number',
+      optional: true,
+      placeholder: '300$, 500$'
+    },
+    {
+      id: 'risk_reward',
+      label: 'R/R',
+      type: 'number',
+      optional: true
+    },
+    {
+      id: 'safe_rule',
+      label: 'Safe-ийн дүрэм өгсөн эсэх (1:1 Break-even)',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      optional: true
+    },
+    {
+      id: 'result',
+      label: 'Үр дүн',
+      type: 'radio',
+      options: ['Win', 'Loss'],
+      optional: true
+    },
+    {
+      id: 'psychology',
+      label: 'Арилжааны өмнөх сэтгэлзүй',
+      type: 'text',
+      optional: true
+    },
+    {
+      id: 'lesson',
+      label: 'Дараа юун дээр анхаарах',
+      type: 'text',
+      optional: true
+    }
+  ],
+
+  // Questions for Эсрэг тоглогчийн Test lvl Break (setup 12)
+  TEST_BREAK: [
+    {
+      id: 'ticker',
+      label: 'Тикер сонгох',
+      type: 'select',
+      options: ['NQ', 'ES', 'GC', '6E', 'BTC', 'CL'],
+      default: 'NQ'
+    },
+    {
+      id: 'weekly',
+      label: 'Weekly хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'daily',
+      label: 'Daily хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'q_test_break_profile_shift',
+      label: 'Wave эсвэл Impulse Profile манай ${direction} тал руу шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q_test_break_cluster',
+      label: 'Тестийн lvl-ийг Break хийж гарч ирсэн cluster',
+      type: 'radio',
+      options: ['Цохилт', 'Энгийн түлхэлт', 'StoppingAction']
+    },
+    {
+      id: 'q_test_break_impulse',
+      label: 'Testийн lvl-ийг Break хийсэн тоглогчийн Impulse Profile хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_test_break_manipulation',
+      label: '+1 TF дээрх Break хийсэн блокны дээд хүрээтэй ойр блокны Manipulation авсан эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q3_wave',
+      label: 'Wave profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Үгүй'
+    },
+    {
+      id: 'q4_impulse',
+      label: 'Impulse profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q5_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction']
+    },
+    {
+      id: 'q6_exit_cluster',
+      label: 'Гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction', 'Байхгүй (Single bar Manipulation)']
+    },
+    {
+      id: 'q7_volume_spike',
+      label: 'Lvl-ийн цаана оролтын cluster тухайн wave дотор багтах топ 3 volume spike орсон',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q8_exit_volume',
+      label: 'Гаралтын cluster-ийн volume оролтын барын өмнөх бараас/дунджаас илүү',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q9_volume_decrease',
+      label: 'Lvl рүү тулж очсон cluster-уудын volume ерөнхийдөө буурч ажиглагдсан',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'session',
+      label: 'Market session',
+      type: 'radio',
+      options: ['Asia', 'Europe', 'US'],
+      optional: true
+    },
+    {
+      id: 'risk',
+      label: 'Risk',
+      type: 'number',
+      optional: true,
+      placeholder: 'Жишээ нь: 100$'
+    },
+    {
+      id: 'reward',
+      label: 'Reward',
+      type: 'number',
+      optional: true,
+      placeholder: '300$, 500$'
+    },
+    {
+      id: 'risk_reward',
+      label: 'R/R',
+      type: 'number',
+      optional: true
+    },
+    {
+      id: 'safe_rule',
+      label: 'Safe-ийн дүрэм өгсөн эсэх (1:1 Break-even)',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      optional: true
+    },
+    {
+      id: 'result',
+      label: 'Үр дүн',
+      type: 'radio',
+      options: ['Win', 'Loss'],
+      optional: true
+    },
+    {
+      id: 'psychology',
+      label: 'Арилжааны өмнөх сэтгэлзүй',
+      type: 'text',
+      optional: true
+    },
+    {
+      id: 'lesson',
+      label: 'Дараа юун дээр анхаарах',
+      type: 'text',
+      optional: true
+    }
+  ],
+
+  // Questions for Эсрэг тоглогчийн WPOC lvl Break (setup 13) - same as TEST_BREAK
+  WPOC_BREAK: [
+    {
+      id: 'ticker',
+      label: 'Тикер сонгох',
+      type: 'select',
+      options: ['NQ', 'ES', 'GC', '6E', 'BTC', 'CL'],
+      default: 'NQ'
+    },
+    {
+      id: 'weekly',
+      label: 'Weekly хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'daily',
+      label: 'Daily хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'q_test_break_profile_shift',
+      label: 'Эсрэг тоглогчийн Wave эсвэл Impulse Profile манай ${direction} тал руу шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q_test_break_cluster',
+      label: 'WPOC lvl-ийг Break хийж гарч ирсэн cluster',
+      type: 'radio',
+      options: ['Цохилт', 'Энгийн түлхэлт', 'StoppingAction']
+    },
+    {
+      id: 'q_test_break_impulse',
+      label: 'WPOC lvl-ийг Break хийсэн тоглогчийн Wave болон Impulse Profile хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_test_break_manipulation',
+      label: '+1 TF дээрх Break хийсэн блокны дээд хүрээтэй ойр блокны Manipulation авсан эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q3_wave',
+      label: 'Wave profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Үгүй'
+    },
+    {
+      id: 'q4_impulse',
+      label: 'Impulse profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q5_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction']
+    },
+    {
+      id: 'q6_exit_cluster',
+      label: 'Гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction', 'Байхгүй (Single bar Manipulation)']
+    },
+    {
+      id: 'q7_volume_spike',
+      label: 'Lvl-ийн цаана оролтын cluster тухайн wave дотор багтах топ 3 volume spike орсон',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q8_exit_volume',
+      label: 'Гаралтын cluster-ийн volume оролтын барын өмнөх бараас/дунджаас илүү',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q9_volume_decrease',
+      label: 'Lvl рүү тулж очсон cluster-уудын volume ерөнхийдөө буурч ажиглагдсан',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'session',
+      label: 'Market session',
+      type: 'radio',
+      options: ['Asia', 'Europe', 'US'],
+      optional: true
+    },
+    {
+      id: 'risk',
+      label: 'Risk',
+      type: 'number',
+      optional: true,
+      placeholder: 'Жишээ нь: 100$'
+    },
+    {
+      id: 'reward',
+      label: 'Reward',
+      type: 'number',
+      optional: true,
+      placeholder: '300$, 500$'
+    },
+    {
+      id: 'risk_reward',
+      label: 'R/R',
+      type: 'number',
+      optional: true
+    },
+    {
+      id: 'safe_rule',
+      label: 'Safe-ийн дүрэм өгсөн эсэх (1:1 Break-even)',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      optional: true
+    },
+    {
+      id: 'result',
+      label: 'Үр дүн',
+      type: 'radio',
+      options: ['Win', 'Loss'],
+      optional: true
+    },
+    {
+      id: 'psychology',
+      label: 'Арилжааны өмнөх сэтгэлзүй',
+      type: 'text',
+      optional: true
+    },
+    {
+      id: 'lesson',
+      label: 'Дараа юун дээр анхаарах',
+      type: 'text',
+      optional: true
+    }
+  ],
+
+  // Questions for Counter Trend (setups 14, 15)
+  COUNTER_TREND: [
+    {
+      id: 'ticker',
+      label: 'Тикер сонгох',
+      type: 'select',
+      options: ['NQ', 'ES', 'GC', '6E', 'BTC', 'CL'],
+      default: 'NQ'
+    },
+    {
+      id: 'weekly',
+      label: 'Weekly хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'daily',
+      label: 'Daily хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: 'Ойлгомжгүй'
+    },
+    {
+      id: 'q_counter_profile_shift',
+      label: 'Эсрэг тоглогчийн Wave эсвэл Impulse Profile манай ${direction} тал руу шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй']
+    },
+    {
+      id: 'q_counter_wbp_cluster',
+      label: 'WBP lvl-ийг сэтэлсэн гаралтын cluster',
+      type: 'radio',
+      options: ['StoppingAction', 'Цохилт', 'Энгийн']
+    },
+    {
+      id: 'q_counter_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'Энгийн түлхэлт', 'StoppingAction']
+    },
+    {
+      id: 'q_counter_small_profile',
+      label: 'Market Profile Хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q_counter_small_constructor',
+      label: 'Constructor хүлээлт',
+      type: 'radio',
+      options: ['Long', 'Short', 'Ойлгомжгүй'],
+      default: null
+    },
+    {
+      id: 'q3_wave',
+      label: 'Wave profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Үгүй'
+    },
+    {
+      id: 'q4_impulse',
+      label: 'Impulse profile шилжсэн эсэх',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q5_entry_cluster',
+      label: 'Оролтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction']
+    },
+    {
+      id: 'q6_exit_cluster',
+      label: 'Гаралтын cluster',
+      type: 'radio',
+      options: ['Цохилт', 'StoppingAction', 'Энгийн түлхэлт', 'Энгийн StoppingAction', 'Байхгүй (Single bar Manipulation)']
+    },
+    {
+      id: 'q7_volume_spike',
+      label: 'Lvl-ийн цаана оролтын cluster тухайн wave доторор багтах топ 3 volume spike орсон',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q8_exit_volume',
+      label: 'Гаралтын cluster-ийн volume оролтын барын өмнөх бараас/дунджаас илүү',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'q9_volume_decrease',
+      label: 'Lvl рүү тулж очсон cluster-уудын volume ерөнхийдөө буурч ажиглагдсан',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      default: 'Тийм'
+    },
+    {
+      id: 'session',
+      label: 'Market session',
+      type: 'radio',
+      options: ['Asia', 'Europe', 'US'],
+      optional: true
+    },
+    {
+      id: 'risk',
+      label: 'Risk',
+      type: 'number',
+      optional: true,
+      placeholder: 'Жишээ нь: 100$'
+    },
+    {
+      id: 'reward',
+      label: 'Reward',
+      type: 'number',
+      optional: true,
+      placeholder: '300$, 500$'
+    },
+    {
+      id: 'risk_reward',
+      label: 'R/R',
+      type: 'number',
+      optional: true
+    },
+    {
+      id: 'safe_rule',
+      label: 'Safe-ийн дүрэм өгсөн эсэх (1:1 Break-even)',
+      type: 'radio',
+      options: ['Тийм', 'Үгүй'],
+      optional: true
+    },
+    {
+      id: 'result',
+      label: 'Үр дүн',
+      type: 'radio',
+      options: ['Win', 'Loss'],
+      optional: true
+    },
+    {
+      id: 'psychology',
+      label: 'Арилжааны өмнөх сэтгэлзүй',
+      type: 'text',
+      optional: true
+    },
+    {
+      id: 'lesson',
+      label: 'Дараа юун дээр анхаарах',
+      type: 'text',
+      optional: true
+    }
   ]
 };
 
@@ -769,11 +1603,31 @@ function showQuestionnaire(entry = null) {
   setupTFTitle.innerHTML = '+1 Setup TF-ийн хувьд (<span style="color: #ec6764ff;">H1</span>/<span style="color: #5cc561ff;">H4</span>)';
   setupTFGroup.appendChild(setupTFTitle);
   
-  const q1Profile = createQuestionGroup(QUESTIONS[3], 3);
-  const q2Constructor = createQuestionGroup(QUESTIONS[4], 4);
-  
-  setupTFGroup.appendChild(q1Profile);
-  setupTFGroup.appendChild(q2Constructor);
+  // For TEST_BREAK and WPOC_BREAK setups (12, 13), use different questions
+  if (setup?.questionSetId === 'TEST_BREAK' || setup?.questionSetId === 'WPOC_BREAK') {
+    const qTestBreakProfileShift = createQuestionGroup(QUESTIONS[3], 3);
+    const qTestBreakCluster = createQuestionGroup(QUESTIONS[4], 4);
+    const qTestBreakImpulse = createQuestionGroup(QUESTIONS[5], 5);
+    
+    setupTFGroup.appendChild(qTestBreakProfileShift);
+    setupTFGroup.appendChild(qTestBreakCluster);
+    setupTFGroup.appendChild(qTestBreakImpulse);
+  } else if (setup?.questionSetId === 'COUNTER_TREND') {
+    const qCounterProfileShift = createQuestionGroup(QUESTIONS[3], 3);
+    const qCounterWbpCluster = createQuestionGroup(QUESTIONS[4], 4);
+    const qCounterEntryCluster = createQuestionGroup(QUESTIONS[5], 5);
+    
+    setupTFGroup.appendChild(qCounterProfileShift);
+    setupTFGroup.appendChild(qCounterWbpCluster);
+    setupTFGroup.appendChild(qCounterEntryCluster);
+  } else {
+    // Default questions for other setups
+    const q1Profile = createQuestionGroup(QUESTIONS[3], 3);
+    const q2Constructor = createQuestionGroup(QUESTIONS[4], 4);
+    
+    setupTFGroup.appendChild(q1Profile);
+    setupTFGroup.appendChild(q2Constructor);
+  }
   
   // For TEST_LVL setups (5-8), add test impulse question
   if (setup?.questionSetId === 'TEST_LVL') {
@@ -792,6 +1646,65 @@ function showQuestionnaire(entry = null) {
   }
   
   questionsWrapper.appendChild(setupTFGroup);
+
+  // For TEST_BREAK and WPOC_BREAK setups (12, 13), add "Жижиг ерөнхий 0 Setup TF" group
+  if (setup?.questionSetId === 'TEST_BREAK' || setup?.questionSetId === 'WPOC_BREAK') {
+    const smallSetupGroup = document.createElement('div');
+    smallSetupGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const smallSetupTitle = document.createElement('h3');
+    smallSetupTitle.className = 'text-base font-bold mb-3';
+    smallSetupTitle.style.color = '#7dd3fc';
+    smallSetupTitle.innerHTML = 'Жижиг ерөнхий 0 Setup TF (<span style="color: #FF9800;">M5</span>/<span style="color: #FF9800;">M15</span>)';
+    smallSetupGroup.appendChild(smallSetupTitle);
+    
+    const qTestBreakManipulation = createQuestionGroup(QUESTIONS[6], 6);
+    smallSetupGroup.appendChild(qTestBreakManipulation);
+    questionsWrapper.appendChild(smallSetupGroup);
+  }
+
+  // For COUNTER_TREND setups (14, 15), add "Жижиг ерөнхий 0 Setup TF" group
+  if (setup?.questionSetId === 'COUNTER_TREND') {
+    const smallSetupGroup = document.createElement('div');
+    smallSetupGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const smallSetupTitle = document.createElement('h3');
+    smallSetupTitle.className = 'text-base font-bold mb-3';
+    smallSetupTitle.style.color = '#7dd3fc';
+    smallSetupTitle.innerHTML = 'Жижиг ерөнхий 0 Setup TF (<span style="color: #FF9800;">M5</span>/<span style="color: #FF9800;">M15</span>)';
+    smallSetupGroup.appendChild(smallSetupTitle);
+    
+    const qCounterSmallProfile = createQuestionGroup(QUESTIONS[6], 6);
+    const qCounterSmallConstructor = createQuestionGroup(QUESTIONS[7], 7);
+    smallSetupGroup.appendChild(qCounterSmallProfile);
+    smallSetupGroup.appendChild(qCounterSmallConstructor);
+    questionsWrapper.appendChild(smallSetupGroup);
+  }
+  
+  // For BLOCK_ZONE setup (10), add "Оролтын 0 TF" group
+  if (setup?.questionSetId === 'BLOCK_ZONE') {
+    const entryTFGroup = document.createElement('div');
+    entryTFGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const entryTFTitle = document.createElement('h3');
+    entryTFTitle.className = 'text-base font-bold mb-3';
+    entryTFTitle.style.color = '#7dd3fc';
+    entryTFTitle.innerHTML = 'Жижиг Setup 0 TF (<span style="color: #FF9800;">M5</span>/<span style="color: #FF9800;">M15</span>)';
+    entryTFGroup.appendChild(entryTFTitle);
+    
+    // Add 4 block zone questions (indices 5-8)
+    const qBlockProfileShift = createQuestionGroup(QUESTIONS[5], 5);
+    const qBlockInitiativeShift = createQuestionGroup(QUESTIONS[6], 6);
+    const qBlockProfileExpectation = createQuestionGroup(QUESTIONS[7], 7);
+    const qBlockConstructorExpectation = createQuestionGroup(QUESTIONS[8], 8);
+    
+    entryTFGroup.appendChild(qBlockProfileShift);
+    entryTFGroup.appendChild(qBlockInitiativeShift);
+    entryTFGroup.appendChild(qBlockProfileExpectation);
+    entryTFGroup.appendChild(qBlockConstructorExpectation);
+    
+    questionsWrapper.appendChild(entryTFGroup);
+  }
   
   // For DAGAJ_OROH setup (9), add "Дагаж орох ерөнхий 0 Setup TF" group
   if (setup?.questionSetId === 'DAGAJ_OROH') {
@@ -811,29 +1724,55 @@ function showQuestionnaire(entry = null) {
     followupSetupGroup.appendChild(qFollowupConstructor);
     questionsWrapper.appendChild(followupSetupGroup);
   }
-  
-  // Group 3: Сигналын 0 TF questions
-  const signalTFGroup = document.createElement('div');
-  signalTFGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
-  
-  const signalTFTitle = document.createElement('h3');
-  signalTFTitle.className = 'text-base font-bold mb-3';
-  signalTFTitle.style.color = '#7dd3fc';
-  signalTFTitle.innerHTML = 'Сигналын 0 TF дээрх баталгаа (<span style="color: #FF9800;">M5</span>/<span style="color: #FF9800;">M15</span>)';
-  signalTFGroup.appendChild(signalTFTitle);
-  
-  // Determine starting index based on setup
-  let signalStartIdx = 5;
-  if (setup?.questionSetId === 'TEST_LVL') signalStartIdx = 6;
-  if (setup?.questionSetId === 'DAGAJ_OROH') signalStartIdx = 10;
-  
-  // Add questions q3_wave through q9_volume_decrease (7 questions)
-  for (let i = signalStartIdx; i < signalStartIdx + 7; i++) {
-    const questionGroup = createQuestionGroup(QUESTIONS[i], i);
-    signalTFGroup.appendChild(questionGroup);
+
+  // For BLOCK_EXIT setup (11), add 2 additional questions to +1 Setup TF group
+  if (setup?.questionSetId === 'BLOCK_EXIT') {
+    // Add block exit impulse and cluster questions to the setup group (after q1_profile and q2_constructor)
+    const blockExitImpulse = createQuestionGroup(QUESTIONS[5], 5);
+    const blockExitCluster = createQuestionGroup(QUESTIONS[6], 6);
+    setupTFGroup.appendChild(blockExitImpulse);
+    setupTFGroup.appendChild(blockExitCluster);
+  }
+
+  // For BLOCK_EXIT setup (11), add "Жижиг ерөнхий 0 Setup TF" group
+  if (setup?.questionSetId === 'BLOCK_EXIT') {
+    const smallSetupGroup = document.createElement('div');
+    smallSetupGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const smallSetupTitle = document.createElement('h3');
+    smallSetupTitle.className = 'text-base font-bold mb-3';
+    smallSetupTitle.style.color = '#7dd3fc';
+    smallSetupTitle.innerHTML = 'Жижиг ерөнхий 0 Setup TF (<span style="color: #FF9800;">M5</span>/<span style="color: #FF9800;">M15</span>)';
+    smallSetupGroup.appendChild(smallSetupTitle);
+    
+    const qSmallSetupManipulation = createQuestionGroup(QUESTIONS[7], 7);
+    smallSetupGroup.appendChild(qSmallSetupManipulation);
+    questionsWrapper.appendChild(smallSetupGroup);
   }
   
-  questionsWrapper.appendChild(signalTFGroup);
+  // Group 3: Сигналын 0 TF questions (skip for DAGAJ_OROH, BLOCK_ZONE, BLOCK_EXIT, TEST_BREAK, WPOC_BREAK, and COUNTER_TREND)
+  if (setup?.questionSetId !== 'DAGAJ_OROH' && setup?.questionSetId !== 'BLOCK_ZONE' && setup?.questionSetId !== 'BLOCK_EXIT' && setup?.questionSetId !== 'TEST_BREAK' && setup?.questionSetId !== 'WPOC_BREAK' && setup?.questionSetId !== 'COUNTER_TREND') {
+    const signalTFGroup = document.createElement('div');
+    signalTFGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const signalTFTitle = document.createElement('h3');
+    signalTFTitle.className = 'text-base font-bold mb-3';
+    signalTFTitle.style.color = '#7dd3fc';
+    signalTFTitle.innerHTML = 'Сигналын 0 TF дээрх баталгаа (<span style="color: #FF9800;">M5</span>/<span style="color: #FF9800;">M15</span>)';
+    signalTFGroup.appendChild(signalTFTitle);
+    
+    // Determine starting index based on setup
+    let signalStartIdx = 5;
+    if (setup?.questionSetId === 'TEST_LVL') signalStartIdx = 6;
+    
+    // Add questions q3_wave through q9_volume_decrease (7 questions)
+    for (let i = signalStartIdx; i < signalStartIdx + 7; i++) {
+      const questionGroup = createQuestionGroup(QUESTIONS[i], i);
+      signalTFGroup.appendChild(questionGroup);
+    }
+    
+    questionsWrapper.appendChild(signalTFGroup);
+  }
   
   // For DAGAJ_OROH setup (9), add connection signal group
   if (setup?.questionSetId === 'DAGAJ_OROH') {
@@ -843,7 +1782,7 @@ function showQuestionnaire(entry = null) {
     const connectionTitle = document.createElement('h3');
     connectionTitle.className = 'text-base font-bold mb-3';
     connectionTitle.style.color = '#7dd3fc';
-    connectionTitle.innerHTML = 'Дагаж орох TF-ийн Сигналын -1 TF дээрх Level-ийн connection: (<span style="color: #FF9800;">M1</span>)';
+    connectionTitle.innerHTML = 'Сигналын -1 TF дээрх баталгаа (<span style="color: #FF9800;">M1</span>)';
     connectionGroup.appendChild(connectionTitle);
     
     // Add 7 connection questions (indices 17-23)
@@ -854,6 +1793,86 @@ function showQuestionnaire(entry = null) {
     
     questionsWrapper.appendChild(connectionGroup);
   }
+
+  // For BLOCK_ZONE setup (10), add connection signal group
+  if (setup?.questionSetId === 'BLOCK_ZONE') {
+    const connectionGroup = document.createElement('div');
+    connectionGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const connectionTitle = document.createElement('h3');
+    connectionTitle.className = 'text-base font-bold mb-3';
+    connectionTitle.style.color = '#7dd3fc';
+    connectionTitle.innerHTML = 'Сигналын -1 TF дээрх баталгаа (<span style="color: #FF9800;">M1</span>)';
+    connectionGroup.appendChild(connectionTitle);
+    
+    // Add 7 connection signal questions (indices 16-22)
+    for (let i = 16; i < 23; i++) {
+      const questionGroup = createQuestionGroup(QUESTIONS[i], i);
+      connectionGroup.appendChild(questionGroup);
+    }
+    
+    questionsWrapper.appendChild(connectionGroup);
+  }
+
+  // For BLOCK_EXIT setup (11), add connection signal group
+  if (setup?.questionSetId === 'BLOCK_EXIT') {
+    const connectionGroup = document.createElement('div');
+    connectionGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const connectionTitle = document.createElement('h3');
+    connectionTitle.className = 'text-base font-bold mb-3';
+    connectionTitle.style.color = '#7dd3fc';
+    connectionTitle.innerHTML = 'Сигналын -1 TF дээрх баталгаа (<span style="color: #FF9800;">M1</span>)';
+    connectionGroup.appendChild(connectionTitle);
+    
+    // Add 7 connection signal questions (indices 8-14)
+    for (let i = 8; i < 15; i++) {
+      const questionGroup = createQuestionGroup(QUESTIONS[i], i);
+      connectionGroup.appendChild(questionGroup);
+    }
+    
+    questionsWrapper.appendChild(connectionGroup);
+  }
+
+  // For TEST_BREAK and WPOC_BREAK setups (12, 13), add signal group with -1 TF title
+  if (setup?.questionSetId === 'TEST_BREAK' || setup?.questionSetId === 'WPOC_BREAK') {
+    const signalTFGroup = document.createElement('div');
+    signalTFGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const signalTFTitle = document.createElement('h3');
+    signalTFTitle.className = 'text-base font-bold mb-3';
+    signalTFTitle.style.color = '#7dd3fc';
+    signalTFTitle.innerHTML = 'Сигналын -1 TF дээрх баталгаа (<span style="color: #FF9800;">M1</span>)';
+    signalTFGroup.appendChild(signalTFTitle);
+    
+    // Add 7 signal questions (indices 7-13)
+    for (let i = 7; i < 14; i++) {
+      const questionGroup = createQuestionGroup(QUESTIONS[i], i);
+      signalTFGroup.appendChild(questionGroup);
+    }
+    
+    questionsWrapper.appendChild(signalTFGroup);
+  }
+
+  // For COUNTER_TREND setups (14, 15), add signal group with -1 TF title
+  if (setup?.questionSetId === 'COUNTER_TREND') {
+    const signalTFGroup = document.createElement('div');
+    signalTFGroup.className = 'mb-6 p-4 bg-white/10 rounded-lg';
+    
+    const signalTFTitle = document.createElement('h3');
+    signalTFTitle.className = 'text-base font-bold mb-3';
+    signalTFTitle.style.color = '#7dd3fc';
+    signalTFTitle.innerHTML = 'Сигналын -1 TF дээрх баталгаа (<span style="color: #FF9800;">M1</span>)';
+    signalTFGroup.appendChild(signalTFTitle);
+    
+    // Add 7 signal questions (indices 8-14)
+    for (let i = 8; i < 15; i++) {
+      const questionGroup = createQuestionGroup(QUESTIONS[i], i);
+      signalTFGroup.appendChild(questionGroup);
+    }
+    
+    questionsWrapper.appendChild(signalTFGroup);
+  }
   
   // Group 3.5: Session selection
   const sessionGroup = document.createElement('div');
@@ -862,13 +1881,18 @@ function showQuestionnaire(entry = null) {
   const sessionTitle = document.createElement('h3');
   sessionTitle.className = 'text-base font-bold mb-3';
   sessionTitle.style.color = '#7dd3fc';
-  sessionTitle.innerHTML = 'Market session <span style="color: #9ca3af; font-size: 0.875rem; font-weight: normal;">(заавал биш)</span>';
+  sessionTitle.innerHTML = 'Market session <span style="color: #ccced2ff; font-size: 0.875rem; font-weight: normal;">(заавал биш)</span>';
   sessionGroup.appendChild(sessionTitle);
   
   // Determine session index based on setup
   let sessionIdx = 12;
   if (setup?.questionSetId === 'TEST_LVL') sessionIdx = 13;
   if (setup?.questionSetId === 'DAGAJ_OROH') sessionIdx = 24;
+  if (setup?.questionSetId === 'BLOCK_ZONE') sessionIdx = 23;
+  if (setup?.questionSetId === 'BLOCK_EXIT') sessionIdx = 15;
+  if (setup?.questionSetId === 'TEST_BREAK') sessionIdx = 14;
+  if (setup?.questionSetId === 'WPOC_BREAK') sessionIdx = 14;
+  if (setup?.questionSetId === 'COUNTER_TREND') sessionIdx = 15;
   
   const sessionQ = createQuestionGroup(QUESTIONS[sessionIdx], sessionIdx);
   sessionGroup.appendChild(sessionQ);
@@ -881,7 +1905,7 @@ function showQuestionnaire(entry = null) {
   const resultTitle = document.createElement('h3');
   resultTitle.className = 'text-base font-bold mb-3';
   resultTitle.style.color = '#7dd3fc';
-  resultTitle.innerHTML = 'Арилжааны үр дүн <span style="color: #9ca3af; font-size: 0.875rem; font-weight: normal;">(заавал биш)</span>';
+  resultTitle.innerHTML = 'Арилжааны үр дүн <span style="color: #ccced2ff; font-size: 0.875rem; font-weight: normal;">(заавал биш)</span>';
   resultGroup.appendChild(resultTitle);
   
   // Determine result indices based on setup
@@ -891,6 +1915,21 @@ function showQuestionnaire(entry = null) {
   }
   if (setup?.questionSetId === 'DAGAJ_OROH') {
     riskIdx = 25; rewardIdx = 26; rrIdx = 27; safeIdx = 28; resultIdx = 29;
+  }
+  if (setup?.questionSetId === 'BLOCK_ZONE') {
+    riskIdx = 24; rewardIdx = 25; rrIdx = 26; safeIdx = 27; resultIdx = 28;
+  }
+  if (setup?.questionSetId === 'BLOCK_EXIT') {
+    riskIdx = 16; rewardIdx = 17; rrIdx = 18; safeIdx = 19; resultIdx = 20;
+  }
+  if (setup?.questionSetId === 'TEST_BREAK') {
+    riskIdx = 15; rewardIdx = 16; rrIdx = 17; safeIdx = 18; resultIdx = 19;
+  }
+  if (setup?.questionSetId === 'WPOC_BREAK') {
+    riskIdx = 15; rewardIdx = 16; rrIdx = 17; safeIdx = 18; resultIdx = 19;
+  }
+  if (setup?.questionSetId === 'COUNTER_TREND') {
+    riskIdx = 16; rewardIdx = 17; rrIdx = 18; safeIdx = 19; resultIdx = 20;
   }
   
   // Create Risk and Reward on same row
@@ -976,7 +2015,7 @@ function showQuestionnaire(entry = null) {
   const notesTitle = document.createElement('h3');
   notesTitle.className = 'text-base font-bold mb-3';
   notesTitle.style.color = '#7dd3fc';
-  notesTitle.innerHTML = 'Тэмдэглэл <span style="color: #9ca3af; font-size: 0.875rem; font-weight: normal;">(заавал биш)</span>';
+  notesTitle.innerHTML = 'Тэмдэглэл <span style="color: #ccced2ff; font-size: 0.875rem; font-weight: normal;">(заавал биш)</span>';
   notesGroup.appendChild(notesTitle);
   
   // Determine notes indices based on setup
@@ -986,6 +2025,21 @@ function showQuestionnaire(entry = null) {
   }
   if (setup?.questionSetId === 'DAGAJ_OROH') {
     psychologyIdx = 30; lessonIdx = 31;
+  }
+  if (setup?.questionSetId === 'BLOCK_ZONE') {
+    psychologyIdx = 29; lessonIdx = 30;
+  }
+  if (setup?.questionSetId === 'BLOCK_EXIT') {
+    psychologyIdx = 21; lessonIdx = 22;
+  }
+  if (setup?.questionSetId === 'TEST_BREAK') {
+    psychologyIdx = 20; lessonIdx = 21;
+  }
+  if (setup?.questionSetId === 'WPOC_BREAK') {
+    psychologyIdx = 20; lessonIdx = 21;
+  }
+  if (setup?.questionSetId === 'COUNTER_TREND') {
+    psychologyIdx = 21; lessonIdx = 22;
   }
   
   const psychologyQ = createQuestionGroup(QUESTIONS[psychologyIdx], psychologyIdx);
@@ -1017,7 +2071,69 @@ function showQuestionnaire(entry = null) {
   // Setup entry direction change handler
   const entryRadios = form.querySelectorAll('input[name="entry_direction"]');
   entryRadios.forEach(radio => {
-    radio.addEventListener('change', updateDefaultsByEntryDirection);
+    radio.addEventListener('change', () => {
+      updateDefaultsByEntryDirection();
+      
+      // Update labels that contain ${direction} for BLOCK_ZONE
+      if (setup?.questionSetId === 'BLOCK_ZONE') {
+        const entryDirection = form.querySelector('input[name="entry_direction"]:checked')?.value;
+        const direction = entryDirection === 'BUY' ? 'Long' : 'Short';
+        const directionColor = entryDirection === 'BUY' ? '#22c55e' : '#fb7185';
+        
+        // Find and update q_block_initiative_shift label
+        const allLabels = form.querySelectorAll('h4');
+        allLabels.forEach((label, index) => {
+          if (label.innerHTML.includes('Санаачлага')) {
+            const labelText = `Санаачлага <span style="color: ${directionColor};">${direction}</span> тал руу солигдсон эсэх`;
+            const asterisk = ' <span style="color: #fb7185;">*</span>';
+            // Extract the question number from the existing label
+            const match = label.innerHTML.match(/^(\d+)\. /);
+            const questionNumber = match ? match[1] : (index + 1);
+            label.innerHTML = `${questionNumber}. ${labelText}${asterisk}`;
+          }
+        });
+      }
+      
+      // Update labels that contain ${direction} for TEST_BREAK and WPOC_BREAK
+      if (setup?.questionSetId === 'TEST_BREAK' || setup?.questionSetId === 'WPOC_BREAK') {
+        const entryDirection = form.querySelector('input[name="entry_direction"]:checked')?.value;
+        const direction = entryDirection === 'BUY' ? 'Long' : 'Short';
+        const directionColor = entryDirection === 'BUY' ? '#22c55e' : '#fb7185';
+        
+        // Find and update q_test_break_profile_shift label
+        const allLabels = form.querySelectorAll('h4');
+        allLabels.forEach((label, index) => {
+          if (label.innerHTML.includes('Wave эсвэл Impulse Profile манай')) {
+            const labelText = `Wave эсвэл Impulse Profile манай <span style="color: ${directionColor};">${direction}</span> тал руу шилжсэн эсэх`;
+            const asterisk = ' <span style="color: #fb7185;">*</span>';
+            // Extract the question number from the existing label
+            const match = label.innerHTML.match(/^(\d+)\. /);
+            const questionNumber = match ? match[1] : (index + 1);
+            label.innerHTML = `${questionNumber}. ${labelText}${asterisk}`;
+          }
+        });
+      }
+
+      // Update labels that contain ${direction} for COUNTER_TREND
+      if (setup?.questionSetId === 'COUNTER_TREND') {
+        const entryDirection = form.querySelector('input[name="entry_direction"]:checked')?.value;
+        const direction = entryDirection === 'BUY' ? 'Long' : 'Short';
+        const directionColor = entryDirection === 'BUY' ? '#22c55e' : '#fb7185';
+        
+        // Find and update q_counter_profile_shift label
+        const allLabels = form.querySelectorAll('h4');
+        allLabels.forEach((label, index) => {
+          if (label.innerHTML.includes('Эсрэг тоглогчийн Wave эсвэл Impulse Profile манай')) {
+            const labelText = `Эсрэг тоглогчийн Wave эсвэл Impulse Profile манай <span style="color: ${directionColor};">${direction}</span> тал руу шилжсэн эсэх`;
+            const asterisk = ' <span style="color: #fb7185;">*</span>';
+            // Extract the question number from the existing label
+            const match = label.innerHTML.match(/^(\d+)\. /);
+            const questionNumber = match ? match[1] : (index + 1);
+            label.innerHTML = `${questionNumber}. ${labelText}${asterisk}`;
+          }
+        });
+      }
+    });
   });
   
   // If editing, pre-populate all answers
@@ -1061,6 +2177,44 @@ function showQuestionnaire(entry = null) {
   // Always reset scroll position when showing questionnaire
   questionnaireContainer.scrollTop = 0;
   form.scrollTop = 0;
+  
+  // Add scroll-to-bottom button (only when editing existing entry)
+  if (entry) {
+    // Remove existing scroll button if any
+    const existingScrollBtn = questionnaireContainer.querySelector('.scroll-to-bottom-btn');
+    if (existingScrollBtn) existingScrollBtn.remove();
+    
+    const scrollBtn = document.createElement('button');
+    scrollBtn.className = 'scroll-to-bottom-btn absolute w-10 h-10 bg-slate-600 hover:bg-slate-800 text-white rounded-md shadow-lg transition-all flex items-center justify-center';
+    scrollBtn.style.bottom = '6.8rem';
+    scrollBtn.style.right = '3rem';
+    scrollBtn.style.zIndex = '50';
+    scrollBtn.title = 'Хамгийн доош шилжих';
+    scrollBtn.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    `;
+    
+    scrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const form = document.getElementById('journal-questionnaire-form');
+      if (form) {
+        form.scrollTo({
+          top: form.scrollHeight-100,
+          behavior: 'smooth'
+        });
+      }
+    });
+    
+    // Append to questionnaire container (which should have position: relative)
+    questionnaireContainer.appendChild(scrollBtn);
+  } else {
+    // Remove scroll button if creating new entry
+    const existingScrollBtn = document.querySelector('.scroll-to-bottom-btn');
+    if (existingScrollBtn) existingScrollBtn.remove();
+  }
 }
 
 // Reset journal view to list
@@ -1074,6 +2228,10 @@ function resetJournalView() {
   // Reset current setup and trade ID
   currentSetup = null;
   currentTradeId = null;
+  
+  // Remove scroll-to-bottom button if exists
+  const scrollBtn = document.querySelector('.scroll-to-bottom-btn');
+  if (scrollBtn) scrollBtn.remove();
   
   // Show list, hide others
   if (listContainer) listContainer.classList.remove('hidden');
@@ -1181,9 +2339,20 @@ function createQuestionGroup(question, questionNumber, titleColor = null) {
   if (titleColor) {
     label.style.color = titleColor;
   }
+  
+  // Process label text - handle ${direction} replacement for BLOCK_ZONE
+  let labelText = question.label;
+  if (labelText.includes('${direction}')) {
+    const form = document.getElementById('journal-questionnaire-form');
+    const entryDirection = form?.querySelector('input[name="entry_direction"]:checked')?.value;
+    const direction = entryDirection === 'BUY' ? 'Long' : 'Short';
+    const directionColor = entryDirection === 'BUY' ? '#22c55e' : '#fb7185'; // green for Long, rose for Short
+    labelText = labelText.replace('${direction}', `<span style="color: ${directionColor};">${direction}</span>`);
+  }
+  
   // Add red asterisk for required questions
   const asterisk = question.optional ? '' : ' <span style="color: #fb7185;">*</span>';
-  label.innerHTML = `${questionNumber}. ${question.label}${asterisk}`;
+  label.innerHTML = `${questionNumber}. ${labelText}${asterisk}`;
   
   const scoreIndicator = document.createElement('span');
   scoreIndicator.className = 'text-sm font-normal opacity-0 transition-opacity';
@@ -1424,6 +2593,106 @@ function calculateQuestionScore(questionId, answer) {
   if (questionId === 'weekly') {
     return null;
   }
+
+  // BLOCK_ZONE setup (10): Жижиг Setup 0 TF questions
+  if (questionId === 'q_block_profile_shift') {
+    return answer === 'Тийм' ? 10 : -10;
+  }
+
+  if (questionId === 'q_block_initiative_shift') {
+    return answer === 'Тийм' ? 10 : -10;
+  }
+
+  if (questionId === 'q_block_profile_expectation') {
+    return answer === expectedDirection ? 30 : -30;
+  }
+
+  if (questionId === 'q_block_constructor_expectation') {
+    return answer === expectedDirection ? 30 : -30;
+  }
+
+  // BLOCK_ZONE setup (10): Connection signal questions (same scoring as main signal)
+  if (questionId === 'q_connection_wave') {
+    return answer === 'Тийм' ? 20 : 0;
+  }
+
+  if (questionId === 'q_connection_impulse') {
+    const waveAnswer = form.querySelector('input[name="q_connection_wave"]:checked')?.value;
+    if (waveAnswer === 'Тийм') return null;
+    if (answer === 'Тийм') return 10;
+    return -30;
+  }
+
+  if (questionId === 'q_connection_entry_cluster') {
+    const points = {
+      'StoppingAction': 5,
+      'Цохилт': 3
+    };
+    return points[answer] || -5;
+  }
+
+  if (questionId === 'q_connection_exit_cluster') {
+    const points = {
+      'Цохилт': 5,
+      'Энгийн түлхэлт': 2,
+      'Энгийн StoppingAction': -4,
+      'StoppingAction': -10,
+      'Байхгүй (Single bar Manipulation)': 0
+    };
+    return points[answer] || 0;
+  }
+
+  if (questionId === 'q_connection_volume_spike') {
+    return answer === 'Тийм' ? 5 : -10;
+  }
+
+  if (questionId === 'q_connection_exit_volume') {
+    return answer === 'Тийм' ? 3 : -5;
+  }
+
+  if (questionId === 'q_connection_volume_decrease') {
+    return answer === 'Тийм' ? 5 : -10;
+  }
+
+  // BLOCK_EXIT setup (11): Block exit questions
+  if (questionId === 'q_block_exit_impulse') {
+    return answer === expectedDirection ? 15 : -15;
+  }
+
+  if (questionId === 'q_block_exit_cluster') {
+    const points = {
+      'Цохилт': 10,
+      'Энгийн түлхэлт': 5,
+      'StoppingAction': -10
+    };
+    return points[answer] || 0;
+  }
+
+  if (questionId === 'q_small_setup_manipulation') {
+    return answer === 'Тийм' ? 10 : -10;
+  }
+
+  // TEST_BREAK setup (12): Test break questions
+  if (questionId === 'q_test_break_profile_shift') {
+    return answer === 'Тийм' ? 10 : -10;
+  }
+
+  if (questionId === 'q_test_break_cluster') {
+    const points = {
+      'Цохилт': 10,
+      'Энгийн түлхэлт': 5,
+      'StoppingAction': -5
+    };
+    return points[answer] || 0;
+  }
+
+  if (questionId === 'q_test_break_impulse') {
+    return answer === expectedDirection ? 10 : -10;
+  }
+
+  if (questionId === 'q_test_break_manipulation') {
+    return answer === 'Тийм' ? 10 : -10;
+  }
   
   return 0;
 }
@@ -1508,11 +2777,55 @@ function updateDefaultsByEntryDirection() {
         }
       });
     });
+  } else if (questionSetId === 'BLOCK_ZONE') {
+    // Questions 1-2, 7-8: q1_profile, q2_constructor, q_block_profile_expectation, q_block_constructor_expectation
+    ['q1_profile', 'q2_constructor', 'q_block_profile_expectation', 'q_block_constructor_expectation'].forEach(qId => {
+      const radios = form.querySelectorAll(`input[name="${qId}"]`);
+      radios.forEach(radio => {
+        if (radio.value === expectedDirection) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  } else if (questionSetId === 'BLOCK_EXIT') {
+    // Questions 1-2, 5: q1_profile, q2_constructor, q_block_exit_impulse
+    ['q1_profile', 'q2_constructor', 'q_block_exit_impulse'].forEach(qId => {
+      const radios = form.querySelectorAll(`input[name="${qId}"]`);
+      radios.forEach(radio => {
+        if (radio.value === expectedDirection) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  } else if (questionSetId === 'TEST_BREAK' || questionSetId === 'WPOC_BREAK') {
+    // Question 5: q_test_break_impulse
+    ['q_test_break_impulse'].forEach(qId => {
+      const radios = form.querySelectorAll(`input[name="${qId}"]`);
+      radios.forEach(radio => {
+        if (radio.value === expectedDirection) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  } else if (questionSetId === 'COUNTER_TREND') {
+    // Questions 6-7: q_counter_small_profile, q_counter_small_constructor
+    ['q_counter_small_profile', 'q_counter_small_constructor'].forEach(qId => {
+      const radios = form.querySelectorAll(`input[name="${qId}"]`);
+      radios.forEach(radio => {
+        if (radio.value === expectedDirection) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        }
+      });
+    });
   }
   
   // Set other defaults
   QUESTIONS.forEach(question => {
-    const shouldSkip = ['q1_profile', 'q2_constructor', 'q_test_impulse', 'q_followup_profile', 'q_followup_constructor'].includes(question.id);
+    const shouldSkip = ['q1_profile', 'q2_constructor', 'q_test_impulse', 'q_followup_profile', 'q_followup_constructor', 'q_block_profile_expectation', 'q_block_constructor_expectation', 'q_block_exit_impulse', 'q_test_break_impulse', 'q_counter_small_profile', 'q_counter_small_constructor'].includes(question.id);
     if (question.default && !shouldSkip) {
       const radio = form.querySelector(`input[name="${question.id}"][value="${question.default}"]`);
       if (radio && !form.querySelector(`input[name="${question.id}"]:checked`)) {
@@ -1579,7 +2892,26 @@ function saveTradeEntry() {
   
   // Check if all required questions are answered
   let allAnswered = true;
+  const unansweredQuestions = [];
+  
   QUESTIONS.forEach(question => {
+    // First check if the question element exists in the form (some questions are conditionally rendered)
+    let questionExists = false;
+    if (question.type === 'select') {
+      questionExists = !!form.querySelector(`select[name="${question.id}"]`);
+    } else if (question.type === 'number') {
+      questionExists = !!form.querySelector(`input[name="${question.id}"]`);
+    } else if (question.type === 'text') {
+      questionExists = !!form.querySelector(`textarea[name="${question.id}"]`);
+    } else {
+      questionExists = !!form.querySelector(`input[name="${question.id}"]`);
+    }
+    
+    // Skip validation for questions that don't exist in the current form
+    if (!questionExists) {
+      return;
+    }
+    
     let answer;
     if (question.type === 'select') {
       const select = form.querySelector(`select[name="${question.id}"]`);
@@ -1597,11 +2929,80 @@ function saveTradeEntry() {
     // Only validate non-optional questions
     if (!answer && !question.optional) {
       allAnswered = false;
+      unansweredQuestions.push(question.id);
     }
     answers[question.id] = answer;
   });
   
   if (!allAnswered || !answers.entry_direction) {
+    // Clear any existing highlights first
+    form.querySelectorAll('[data-validation-highlight="true"]').forEach(group => {
+      group.style.backgroundColor = '';
+      group.removeAttribute('data-validation-highlight');
+    });
+    
+    // Group unanswered questions by their parent container
+    const unansweredGroups = new Set();
+    unansweredQuestions.forEach(questionId => {
+      const questionElement = form.querySelector(`[name="${questionId}"]`);
+      if (questionElement) {
+        const questionWrapper = questionElement.closest('.mb-4');
+        if (questionWrapper) {
+          const parentGroup = questionWrapper.parentElement;
+          if (parentGroup && parentGroup.classList.contains('bg-white/10')) {
+            unansweredGroups.add(parentGroup);
+          }
+        }
+      }
+    });
+    
+    // Highlight groups and set up removal logic
+    unansweredGroups.forEach(parentGroup => {
+      // Add light rose background and mark it
+      parentGroup.setAttribute('data-validation-highlight', 'true');
+      parentGroup.style.backgroundColor = 'rgba(251, 113, 133, 0.15)';
+      parentGroup.style.transition = 'background-color 0.3s ease';
+      
+      // Function to check if all required questions in this group are answered
+      const checkGroupComplete = () => {
+        const questionsInGroup = parentGroup.querySelectorAll('[name]');
+        let allGroupQuestionsAnswered = true;
+        
+        questionsInGroup.forEach(element => {
+          const questionId = element.getAttribute('name');
+          // Find the question definition to check if it's optional
+          const questionDef = QUESTIONS.find(q => q.id === questionId);
+          if (questionDef && !questionDef.optional) {
+            let hasAnswer = false;
+            if (element.tagName === 'SELECT') {
+              hasAnswer = !!element.value;
+            } else if (element.type === 'radio') {
+              hasAnswer = !!form.querySelector(`input[name="${questionId}"]:checked`);
+            } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+              hasAnswer = !!element.value;
+            }
+            
+            if (!hasAnswer) {
+              allGroupQuestionsAnswered = false;
+            }
+          }
+        });
+        
+        // Remove highlight if all required questions in this group are answered
+        if (allGroupQuestionsAnswered) {
+          parentGroup.style.backgroundColor = '';
+          parentGroup.removeAttribute('data-validation-highlight');
+        }
+      };
+      
+      // Attach listeners to all questions in this group
+      const questionsInGroup = parentGroup.querySelectorAll('[name]');
+      questionsInGroup.forEach(element => {
+        element.addEventListener('change', checkGroupComplete);
+        element.addEventListener('input', checkGroupComplete);
+      });
+    });
+    
     alert('Улаанаар * тэмдэглэгдсэн бүх асуултад хариулна уу.');
     return;
   }
@@ -1702,12 +3103,18 @@ function createJournalRow(entry, entryNumber) {
   if (entry.answers.result === 'Win') {
     resultBadge = '<span style="display: inline-block; background-color: #22c55e; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-left: 6px; white-space: nowrap;">WIN</span>';
   } else if (entry.answers.result === 'Loss') {
-    resultBadge = '<span style="display: inline-block; background-color: #ef4444; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-left: 6px; white-space: nowrap;">SL</span>';
+    // If safe rule was applied (Тийм), show BE badge in orange, otherwise show SL in red
+    if (entry.answers.safe_rule === 'Тийм') {
+      resultBadge = '<span style="display: inline-block; background-color: #f97316; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-left: 6px; white-space: nowrap;">BE</span>';
+    } else {
+      resultBadge = '<span style="display: inline-block; background-color: #ef4444; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-left: 6px; white-space: nowrap;">SL</span>';
+    }
   }
   
-  // Break-even indicator (only show if answer was yes)
+  // Break-even indicator (only show if answer was yes and result is NOT loss)
+  // If result is loss and safe_rule is yes, it's already shown as BE badge
   let breakEvenIndicator = '';
-  if (entry.answers.safe_rule === 'Тийм') {
+  if (entry.answers.safe_rule === 'Тийм' && entry.answers.result !== 'Loss') {
     breakEvenIndicator = ' • <span style="color: #eab308;">Break-even ✓</span>';
   }
   
@@ -1732,10 +3139,16 @@ function createJournalRow(entry, entryNumber) {
     sessionDisplay = ` • <span style="color: rgba(255, 255, 255, 0.6);">${sessionAbbr}</span>`;
   }
   
+  // Trim setup name if too long (max 35 characters)
+  const maxLength = 35;
+  const displayName = entry.setupName.length > maxLength 
+    ? entry.setupName.substring(0, maxLength) + '...' 
+    : entry.setupName;
+  
   row.innerHTML = `
     <div class="flex justify-between items-center">
       <div class="flex-1">
-        <div class="text-white font-normal text-sm">${entryNumber}. ${entry.setupName}${resultBadge}</div>
+        <div class="text-white font-normal text-sm">${entryNumber}. ${displayName}${resultBadge}</div>
         <div class="text-white/60 text-xs">${tickerBadge}${dateStr} • <span style="color: ${directionColor};">${entry.answers.entry_direction}</span>${breakEvenIndicator}${riskRewardDisplay}${sessionDisplay}</div>
       </div>
       <div class="flex items-center gap-3">
