@@ -2279,6 +2279,101 @@ function showQuestionnaire(entry = null) {
   
   // Add event listeners to all form inputs for real-time score calculation
   setupLiveScoreCalculation();
+  
+  // Setup reward reminder notification
+  setupRewardReminder();
+}
+
+// Setup reward reminder notification for Win + Safe Rule = Yes
+function setupRewardReminder() {
+  const form = document.getElementById('journal-questionnaire-form');
+  if (!form) return;
+  
+  // Create notification element (initially hidden)
+  let notification = document.getElementById('reward-reminder-notification');
+  if (!notification) {
+    notification = document.createElement('div');
+    notification.id = 'reward-reminder-notification';
+    notification.className = 'fixed top-10 left-6 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 text-white px-4 py-3 rounded-lg shadow-2xl border border-purple-400 max-w-md z-[250] transition-all duration-500 ease-out';
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateY(-10px)';
+    notification.style.pointerEvents = 'none';
+    notification.innerHTML = `
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 text-2xl">💡</div>
+        <div class="flex-1">
+          <p class="font-semibold text-sm mb-1">TP хүрсэн арилжааны сануулга</p>
+          <p class="text-xs leading-relaxed">Safe-ийн дүрмийн дагуу 1:1RR-тай хаасан тал арилжааны ашгийг бүтэн TP хүрсэн ашигтай нэмж тооцож <span class="font-bold text-yellow-300 bg-yellow-300/20 px-1 rounded">Reward талбарт</span> гараар оруулна уу. Энэ нь таны ашгийн тайланг нарийвчлалтай гаргахад туслана.</p>
+        </div>
+        <button class="flex-shrink-0 text-white/80 hover:text-white transition-colors" onclick="
+          const notif = document.getElementById('reward-reminder-notification');
+          notif.style.opacity = '0';
+          notif.style.transform = 'translateY(-10px)';
+          notif.style.pointerEvents = 'none';
+        ">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    `;
+    document.body.appendChild(notification);
+  }
+  
+  // Function to check and show/hide notification and highlight Reward label
+  const checkAndNotify = () => {
+    const resultInput = form.querySelector('input[name="result"]:checked');
+    const safeRuleInput = form.querySelector('input[name="safe_rule"]:checked');
+    
+    const isWin = resultInput?.value === 'Win';
+    const isSafeRuleYes = safeRuleInput?.value === 'Тийм';
+    
+    // Find the Reward label
+    const rewardLabel = Array.from(form.querySelectorAll('h4')).find(label => 
+      label.textContent.includes('Reward')
+    );
+    
+    if (isWin && isSafeRuleYes) {
+      // Fade in notification with slide down
+      notification.style.opacity = '1';
+      notification.style.transform = 'translateY(0)';
+      notification.style.pointerEvents = 'auto';
+      
+      // Highlight Reward label
+      if (rewardLabel) {
+        rewardLabel.classList.add('font-bold', 'text-yellow-300', 'bg-yellow-300/20', 'px-1', 'rounded');
+      }
+    } else {
+      // Fade out notification with slide up
+      notification.style.opacity = '0';
+      notification.style.transform = 'translateY(-10px)';
+      notification.style.pointerEvents = 'none';
+      
+      // Remove highlight from Reward label
+      if (rewardLabel) {
+        rewardLabel.classList.remove('font-bold', 'text-yellow-300', 'bg-yellow-300/20', 'px-1', 'rounded');
+      }
+    }
+  };
+  
+  // Add listeners to result and safe_rule inputs
+  const resultInputs = form.querySelectorAll('input[name="result"]');
+  const safeRuleInputs = form.querySelectorAll('input[name="safe_rule"]');
+  
+  resultInputs.forEach(input => {
+    input.addEventListener('change', checkAndNotify);
+  });
+  
+  safeRuleInputs.forEach(input => {
+    input.addEventListener('change', checkAndNotify);
+  });
+  
+  // Initial check with slight delay to allow fade-in transition
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      checkAndNotify();
+    });
+  });
 }
 
 // Setup live score calculation
@@ -2371,6 +2466,10 @@ function resetJournalView() {
   // Remove live score indicator if exists
   const scoreIndicator = document.querySelector('.live-score-indicator');
   if (scoreIndicator) scoreIndicator.remove();
+  
+  // Remove reward reminder notification if exists
+  const rewardNotification = document.getElementById('reward-reminder-notification');
+  if (rewardNotification) rewardNotification.remove();
   
   // Show list, hide others
   if (listContainer) listContainer.classList.remove('hidden');
