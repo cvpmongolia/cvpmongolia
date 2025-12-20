@@ -1533,9 +1533,12 @@ function showSetupSelection(resetScroll = true) {
   if (questionnaireContainer) questionnaireContainer.classList.add('hidden');
   setupContainer.classList.remove('hidden');
   
-  // Toggle header buttons
+  // Toggle header buttons and hide title container
   if (addBtn) addBtn.classList.add('hidden');
   if (headerBackBtn) headerBackBtn.classList.remove('hidden');
+  
+  const journalTitleContainer = document.getElementById('journal-title-container');
+  if (journalTitleContainer) journalTitleContainer.classList.add('hidden');
   
   // Reset scroll position only when coming from Add button
   if (resetScroll && setupContainer) {
@@ -2172,6 +2175,7 @@ function showQuestionnaire(entry = null) {
   
   // Update journal title based on mode
   const journalTitle = document.getElementById('journal-title');
+  const reportBtn = document.getElementById('show-report-btn');
   const addBtn = document.getElementById('add-trade-btn');
   const headerBackBtn = document.getElementById('header-back-btn');
   
@@ -2191,9 +2195,10 @@ function showQuestionnaire(entry = null) {
   
   // Toggle header buttons based on mode
   if (entry) {
-    // Editing mode: hide both buttons
+    // Editing mode: hide buttons and report button, keep title visible
     if (addBtn) addBtn.classList.add('hidden');
     if (headerBackBtn) headerBackBtn.classList.add('hidden');
+    if (reportBtn) reportBtn.classList.add('hidden');
   }
   // Note: In creating mode, buttons are already toggled by showSetupSelection()
   
@@ -2256,6 +2261,8 @@ function resetJournalView() {
   const questionnaireContainer = document.getElementById('journal-questionnaire-container');
   const addBtn = document.getElementById('add-trade-btn');
   const headerBackBtn = document.getElementById('header-back-btn');
+  const reportBtn = document.getElementById('show-report-btn');
+  const journalTitleContainer = document.getElementById('journal-title-container');
   
   // Reset journal title
   const journalTitle = document.getElementById('journal-title');
@@ -2276,9 +2283,11 @@ function resetJournalView() {
   if (setupContainer) setupContainer.classList.add('hidden');
   if (questionnaireContainer) questionnaireContainer.classList.add('hidden');
   
-  // Toggle header buttons back
+  // Toggle header buttons and show title container
   if (addBtn) addBtn.classList.remove('hidden');
   if (headerBackBtn) headerBackBtn.classList.add('hidden');
+  if (reportBtn) reportBtn.classList.remove('hidden');
+  if (journalTitleContainer) journalTitleContainer.classList.remove('hidden');
 }
 
 // Create entry direction group
@@ -3315,11 +3324,346 @@ function showImageZoom(imageSrc, altText) {
   }
 }
 
+// ============================================
+// REPORT MODAL FUNCTIONALITY
+// ============================================
+
+function initializeReportModal() {
+  const showReportBtn = document.getElementById('show-report-btn');
+  const reportModal = document.getElementById('report-modal');
+  const closeReportBtn = document.getElementById('close-report-btn');
+  const dateButtons = document.querySelectorAll('.report-date-btn');
+  
+  let currentDateRange = 'all';
+  
+  // Show report modal
+  if (showReportBtn) {
+    showReportBtn.addEventListener('click', () => {
+      reportModal.classList.remove('hidden');
+      generateReportDisplay(currentDateRange);
+    });
+  }
+  
+  // Close report modal
+  if (closeReportBtn) {
+    closeReportBtn.addEventListener('click', () => {
+      reportModal.classList.add('hidden');
+    });
+  }
+  
+  // Close when clicking outside
+  reportModal.addEventListener('click', (e) => {
+    if (e.target === reportModal) {
+      reportModal.classList.add('hidden');
+    }
+  });
+  
+  // Date range buttons
+  dateButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active state
+      dateButtons.forEach(b => {
+        b.classList.remove('active', 'bg-blue-600');
+        b.classList.add('bg-white/20', 'hover:bg-white/30');
+      });
+      btn.classList.add('active', 'bg-blue-600');
+      btn.classList.remove('bg-white/20', 'hover:bg-white/30');
+      
+      // Update report
+      currentDateRange = btn.getAttribute('data-range');
+      generateReportDisplay(currentDateRange);
+    });
+  });
+}
+
+function generateReportDisplay(dateRange) {
+  const reportContent = document.getElementById('report-content');
+  
+  // Check if TradingReport is available
+  if (typeof TradingReport === 'undefined') {
+    reportContent.innerHTML = '<p class="text-red-400">Report module not loaded</p>';
+    return;
+  }
+  
+  // Generate report data
+  const report = TradingReport.generateReport(dateRange);
+  
+  // Handle empty state
+  if (report.isEmpty) {
+    reportContent.innerHTML = `
+      <div class="text-center py-12">
+        <p class="text-xl text-white/70">📊 Өө. Арилжааны түүх байхгүй байна</p>
+        <p class="text-sm text-white/50 mt-2">Арилжааны журнал руу орж шинээр хийсэн арилжаагаа бүртгээрэй!</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Build report HTML
+  let html = `
+    <div class="mb-6 p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-500/30">
+      <h3 class="text-lg font-bold mb-2">📅 ${report.period}</h3>
+      <p class="text-sm text-white/70">Нийт арилжаа: ${report.totalEntries}</p>
+    </div>
+  `;
+  
+  // Financial Metrics
+  const fin = report.financial;
+  const plColor = fin.totalPL >= 0 ? 'text-green-400' : 'text-red-400';
+  const wrColor = fin.winRate >= 50 ? 'text-green-400' : 'text-red-400';
+  
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-blue-400">💰 Санхүүгийн гүйцэтгэл</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Нийт ашиг/алдагдал</p>
+          <p class="text-2xl font-bold ${plColor}">$${fin.totalPL.toFixed(2)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Ялалтын хувь</p>
+          <p class="text-2xl font-bold ${wrColor}">${fin.winRate.toFixed(1)}%</p>
+          <p class="text-xs text-white/50">${fin.totalWins}W / ${fin.totalLosses}L</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Profit Factor</p>
+          <p class="text-2xl font-bold text-yellow-400">${fin.profitFactor === Infinity ? '∞' : fin.profitFactor.toFixed(2)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Дундаж R:R</p>
+          <p class="text-2xl font-bold text-purple-400">${fin.avgRR.toFixed(2)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Дундаж ялалт</p>
+          <p class="text-lg font-bold text-green-400">$${fin.avgWin.toFixed(2)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Дундаж алдагдал</p>
+          <p class="text-lg font-bold text-red-400">$${fin.avgLoss.toFixed(2)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Хамгийн их ялалт</p>
+          <p class="text-lg font-bold text-green-400">$${fin.largestWin.toFixed(2)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Хамгийн их алдагдал</p>
+          <p class="text-lg font-bold text-red-400">$${fin.largestLoss.toFixed(2)}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Trade Breakdown
+  const bd = report.breakdown;
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-green-400">📊 Арилжааны Задаргаа</h3>
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Break-even</p>
+          <p class="text-2xl font-bold text-yellow-400">${bd.breakEvenCount}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Safe Rule</p>
+          <p class="text-2xl font-bold text-blue-400">${bd.safeRulePercentage.toFixed(1)}%</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Safe Rule дагасан</p>
+          <p class="text-2xl font-bold text-blue-400">${bd.safeRuleFollowed}/${report.totalEntries}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-4 bg-green-900/30 rounded-lg border border-green-500/30">
+          <p class="text-sm font-bold text-green-300 mb-2">📈 Long арилжаа</p>
+          <div class="space-y-1 text-sm">
+            <p>Нийт: ${bd.longMetrics.totalTrades} | Ялалт: ${bd.longMetrics.totalWins} | Хожигдол: ${bd.longMetrics.totalLosses}</p>
+            <p>Ялалтын хувь: <span class="font-bold">${bd.longMetrics.winRate.toFixed(1)}%</span></p>
+            <p>P/L: <span class="font-bold ${bd.longMetrics.totalPL >= 0 ? 'text-green-400' : 'text-red-400'}">$${bd.longMetrics.totalPL.toFixed(2)}</span></p>
+          </div>
+        </div>
+        <div class="p-4 bg-red-900/30 rounded-lg border border-red-500/30">
+          <p class="text-sm font-bold text-red-300 mb-2">📉 Short арилжаа</p>
+          <div class="space-y-1 text-sm">
+            <p>Нийт: ${bd.shortMetrics.totalTrades} | Ялалт: ${bd.shortMetrics.totalWins} | Хожигдол: ${bd.shortMetrics.totalLosses}</p>
+            <p>Ялалтын хувь: <span class="font-bold">${bd.shortMetrics.winRate.toFixed(1)}%</span></p>
+            <p>P/L: <span class="font-bold ${bd.shortMetrics.totalPL >= 0 ? 'text-green-400' : 'text-red-400'}">$${bd.shortMetrics.totalPL.toFixed(2)}</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Session Performance
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-orange-400">🌍 Session-ий Үзүүлэлт</h3>
+      <div class="grid grid-cols-3 gap-4">
+  `;
+  
+  Object.entries(report.sessions).forEach(([session, stats]) => {
+    const sessionPLColor = stats.totalPL >= 0 ? 'text-green-400' : 'text-red-400';
+    html += `
+      <div class="p-4 bg-white/10 rounded-lg">
+        <p class="text-sm font-bold text-white/80 mb-2">${session}</p>
+        <p class="text-xs text-white/60">Арилжаа: ${stats.totalTrades}</p>
+        <p class="text-xs text-white/60">Ялалт: ${stats.winRate.toFixed(1)}%</p>
+        <p class="text-lg font-bold ${sessionPLColor}">$${stats.totalPL.toFixed(2)}</p>
+      </div>
+    `;
+  });
+  
+  html += `
+      </div>
+    </div>
+  `;
+  
+  // Setup Performance (Categories)
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-purple-400">🎯 Setup Категориор</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+  `;
+  
+  Object.entries(report.setups.perCategory).forEach(([category, stats]) => {
+    const catPLColor = stats.totalPL >= 0 ? 'text-green-400' : 'text-red-400';
+    html += `
+      <div class="p-4 bg-white/10 rounded-lg">
+        <p class="text-sm font-bold text-white/80 mb-2">${category}</p>
+        <p class="text-xs text-white/60">Арилжаа: ${stats.tradeCount}</p>
+        <p class="text-xs text-white/60">Ялалт: ${stats.winRate.toFixed(1)}%</p>
+        <p class="text-lg font-bold ${catPLColor}">$${stats.totalPL.toFixed(2)}</p>
+      </div>
+    `;
+  });
+  
+  html += `
+      </div>
+    </div>
+  `;
+  
+  // Ticker Performance
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-cyan-400">📈 Ticker-үүдийн Үзүүлэлт</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+  `;
+  
+  Object.entries(report.tickers).forEach(([ticker, stats]) => {
+    if (stats.tradeCount === 0) return;
+    const tickerPLColor = stats.totalPL >= 0 ? 'text-green-400' : 'text-red-400';
+    html += `
+      <div class="p-4 bg-white/10 rounded-lg">
+        <p class="text-sm font-bold text-white/80 mb-2">${ticker}</p>
+        <p class="text-xs text-white/60">Арилжаа: ${stats.tradeCount}</p>
+        <p class="text-xs text-white/60">Ялалт: ${stats.winRate.toFixed(1)}%</p>
+        <p class="text-lg font-bold ${tickerPLColor}">$${stats.totalPL.toFixed(2)}</p>
+      </div>
+    `;
+  });
+  
+  html += `
+      </div>
+    </div>
+  `;
+  
+  // Quality Metrics
+  const qual = report.quality;
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-pink-400">⭐ Чанарын Үзүүлэлт</h3>
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Дундаж оноо</p>
+          <p class="text-2xl font-bold text-yellow-400">${qual.avgScore.toFixed(1)}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Оноо-үр дүнгийн корреляци</p>
+          <p class="text-2xl font-bold ${qual.scoreCorrelation >= 0 ? 'text-green-400' : 'text-red-400'}">${qual.scoreCorrelation > 0 ? '+' : ''}${qual.scoreCorrelation.toFixed(1)}</p>
+          <p class="text-xs text-white/50">Ялалт: ${qual.avgScoreWins.toFixed(1)} | Хожигдол: ${qual.avgScoreLosses.toFixed(1)}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-5 gap-2">
+        <div class="p-3 bg-green-900/30 rounded border border-green-500/30 text-center">
+          <p class="text-xs text-white/60">Маш сайн</p>
+          <p class="text-lg font-bold">${qual.scoreRanges.excellent}</p>
+        </div>
+        <div class="p-3 bg-blue-900/30 rounded border border-blue-500/30 text-center">
+          <p class="text-xs text-white/60">Сайн</p>
+          <p class="text-lg font-bold">${qual.scoreRanges.good}</p>
+        </div>
+        <div class="p-3 bg-yellow-900/30 rounded border border-yellow-500/30 text-center">
+          <p class="text-xs text-white/60">Дундаж</p>
+          <p class="text-lg font-bold">${qual.scoreRanges.average}</p>
+        </div>
+        <div class="p-3 bg-orange-900/30 rounded border border-orange-500/30 text-center">
+          <p class="text-xs text-white/60">Муу</p>
+          <p class="text-lg font-bold">${qual.scoreRanges.poor}</p>
+        </div>
+        <div class="p-3 bg-red-900/30 rounded border border-red-500/30 text-center">
+          <p class="text-xs text-white/60">Сөрөг</p>
+          <p class="text-lg font-bold">${qual.scoreRanges.negative}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Streaks and Risk
+  const streaks = report.streaks;
+  const risk = report.risk;
+  html += `
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-4 text-yellow-400">🔥 Streak & Эрсдэл</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Одоогийн streak</p>
+          <p class="text-2xl font-bold ${streaks.currentStreak >= 0 ? 'text-green-400' : 'text-red-400'}">${streaks.currentStreak > 0 ? '+' : ''}${streaks.currentStreak}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Хамгийн урт ялалт</p>
+          <p class="text-2xl font-bold text-green-400">${streaks.longestWinStreak}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Хамгийн урт хожигдол</p>
+          <p class="text-2xl font-bold text-red-400">${streaks.longestLossStreak}</p>
+        </div>
+        <div class="p-4 bg-white/10 rounded-lg">
+          <p class="text-xs text-white/60 mb-1">Max Drawdown</p>
+          <p class="text-2xl font-bold text-red-400">$${risk.maxDrawdown.toFixed(2)}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Rankings
+  if (report.rankings.bestSetupByWinRate) {
+    html += `
+      <div class="mb-6">
+        <h3 class="text-lg font-bold mb-4 text-emerald-400">🏆 Шилдэг Үзүүлэлт</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="p-4 bg-green-900/30 rounded-lg border border-green-500/30">
+            <p class="text-xs text-white/60 mb-2">Хамгийн өндөр ялалтын хувьтай Setup</p>
+            <p class="text-sm font-bold text-green-300">${report.rankings.bestSetupByWinRate.setupName}</p>
+            <p class="text-lg font-bold text-green-400">${report.rankings.bestSetupByWinRate.winRate.toFixed(1)}%</p>
+          </div>
+          <div class="p-4 bg-green-900/30 rounded-lg border border-green-500/30">
+            <p class="text-xs text-white/60 mb-2">Хамгийн их ашигтай Setup</p>
+            <p class="text-sm font-bold text-green-300">${report.rankings.bestSetupByPL.setupName}</p>
+            <p class="text-lg font-bold text-green-400">$${report.rankings.bestSetupByPL.totalPL.toFixed(2)}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  reportContent.innerHTML = html;
+}
+
 // Export functions for use in main script
 if (typeof window !== 'undefined') {
   window.TradingJournal = {
     initialize: initializeTradingJournal,
     saveTradeEntry: saveTradeEntry,
-    resetJournalView: resetJournalView
+    resetJournalView: resetJournalView,
+    initializeReportModal: initializeReportModal
   };
 }

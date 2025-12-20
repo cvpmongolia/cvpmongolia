@@ -309,7 +309,12 @@
       <div class="w-[40%] flex items-start justify-center">
         <div class="sticky top-12 container bg-white/30 backdrop-blur-md shadow-lg rounded-lg p-6 font-mono text-base w-full h-[calc(100vh-4rem)] flex flex-col">
           <div class="flex justify-between items-center mb-6">
-            <h2 id="journal-title" class="text-xl font-bold text-white drop-shadow-lg">Арилжааны Журнал</h2>
+            <div id="journal-title-container" class="flex items-center gap-3">
+              <h2 id="journal-title" class="text-xl font-bold text-white drop-shadow-lg">Арилжааны Журнал</h2>
+              <button id="show-report-btn" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg shadow-md transition-all text-xs">
+                📊 Тайлан
+              </button>
+            </div>
             <button id="add-trade-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all text-sm">
               + Нэмэх
             </button>
@@ -518,9 +523,45 @@
       </button>
       <img id="zoomed-image" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg">
     </div>
+
+    <!-- Report Modal -->
+    <div id="report-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto py-8">
+      <div class="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-7xl w-full mx-4 border border-white/20 my-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white">📊 CVP Арилжааны Тайлан</h2>
+          <button id="close-report-btn" class="w-8 h-8 flex items-center justify-center text-white hover:bg-white/20 rounded transition-all" title="Хаах">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Date Range Selector -->
+        <div class="flex gap-2 mb-6">
+          <button class="report-date-btn active px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-all text-sm" data-range="all">
+            Бүгд
+          </button>
+          <button class="report-date-btn px-4 py-2 bg-white/20 text-white font-semibold rounded-lg shadow-md transition-all text-sm hover:bg-white/30" data-range="today">
+            Өнөөдөр
+          </button>
+          <button class="report-date-btn px-4 py-2 bg-white/20 text-white font-semibold rounded-lg shadow-md transition-all text-sm hover:bg-white/30" data-range="week">
+            Энэ долоо хоног
+          </button>
+          <button class="report-date-btn px-4 py-2 bg-white/20 text-white font-semibold rounded-lg shadow-md transition-all text-sm hover:bg-white/30" data-range="month">
+            Энэ сар
+          </button>
+        </div>
+
+        <!-- Report Content -->
+        <div id="report-content" class="text-white space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+          <!-- Report will be dynamically generated here -->
+        </div>
+      </div>
+    </div>
     
     <script src="./expectation-advice.js"></script>
     <script src="./component.js"></script>
+    <script src="./trading-report.js"></script>
     <script src="./trading-journal.js"></script>
     <script src="./script.js"></script>
   </body>

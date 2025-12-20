@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize trading journal
   if (typeof TradingJournal !== 'undefined') {
     TradingJournal.initialize();
+    TradingJournal.initializeReportModal();
   }
 });
 
