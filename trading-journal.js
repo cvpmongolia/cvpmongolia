@@ -2493,19 +2493,19 @@ function calculateQuestionScore(questionId, answer) {
   
   // Q1: Market Profile
   if (questionId === 'q1_profile') {
-    return answer === expectedDirection ? 30 : 0;
+    return answer === expectedDirection ? 25 : -15;
   }
   
   // Q2: Constructor
   if (questionId === 'q2_constructor') {
-    return answer === expectedDirection ? 25 : 0;
+    return answer === expectedDirection ? 20 : -10;
   }
   
   // TEST_LVL setups (5-8): Test impulse question
   if (questionId === 'q_test_impulse') {
-    if (answer === expectedDirection) return 5;
-    if (answer === 'Ойлгомжгүй') return 0;
-    return -5;
+    if (answer === expectedDirection) return 8;
+    if (answer === 'Ойлгомжгүй') return -8;
+    return -8;
   }
   
   // DAGAJ_OROH setup (9): Additional +1 TF questions
@@ -2514,17 +2514,17 @@ function calculateQuestionScore(questionId, answer) {
   }
   
   if (questionId === 'q_manip_closed') {
-    return answer === 'Тийм' ? 10 : -20;
+    return answer === 'Тийм' ? 5 : -30;
   }
   
   if (questionId === 'q_connection_stopping') {
-    return answer === 'Тийм' ? 10 : -20;
+    return answer === 'Тийм' ? 5 : -5;
   }
   
   // DAGAJ_OROH setup (9): Followup profile/constructor
   if (questionId === 'q_followup_profile' || questionId === 'q_followup_constructor') {
-    if (answer === expectedDirection) return 15;
-    if (answer === 'Ойлгомжгүй') return 0;
+    if (answer === expectedDirection) return 8;
+    if (answer === 'Ойлгомжгүй') return -15;
     return -15;
   }
   
@@ -2632,19 +2632,19 @@ function calculateQuestionScore(questionId, answer) {
 
   // BLOCK_ZONE setup (10): Жижиг Setup 0 TF questions
   if (questionId === 'q_block_profile_shift') {
-    return answer === 'Тийм' ? 10 : -10;
+    return answer === 'Тийм' ? 10 : -20;
   }
 
   if (questionId === 'q_block_initiative_shift') {
-    return answer === 'Тийм' ? 10 : -10;
+    return answer === 'Тийм' ? 10 : -30;
   }
 
   if (questionId === 'q_block_profile_expectation') {
-    return answer === expectedDirection ? 30 : -30;
+    return answer === expectedDirection ? 10 : -20;
   }
 
   if (questionId === 'q_block_constructor_expectation') {
-    return answer === expectedDirection ? 30 : -30;
+    return answer === expectedDirection ? 10 : -20;
   }
 
   // BLOCK_ZONE setup (10): Connection signal questions (same scoring as main signal)
@@ -2692,14 +2692,14 @@ function calculateQuestionScore(questionId, answer) {
 
   // BLOCK_EXIT setup (11): Block exit questions
   if (questionId === 'q_block_exit_impulse') {
-    return answer === expectedDirection ? 15 : -15;
+    return answer === expectedDirection ? 10 : -15;
   }
 
   if (questionId === 'q_block_exit_cluster') {
     const points = {
-      'Цохилт': 10,
-      'Энгийн түлхэлт': 5,
-      'StoppingAction': -10
+      'Цохилт': 5,
+      'Энгийн түлхэлт': 2,
+      'StoppingAction': -15
     };
     return points[answer] || 0;
   }
@@ -2710,7 +2710,7 @@ function calculateQuestionScore(questionId, answer) {
 
   // TEST_BREAK setup (12): Test break questions
   if (questionId === 'q_test_break_profile_shift') {
-    return answer === 'Тийм' ? 10 : -10;
+    return answer === 'Тийм' ? 30 : -10;
   }
 
   if (questionId === 'q_test_break_cluster') {
