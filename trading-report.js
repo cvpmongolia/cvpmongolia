@@ -67,7 +67,13 @@ const TradingReport = (() => {
 
     trades.forEach(trade => {
       const risk = parseFloat(trade.answers.risk) || 0;
-      const reward = parseFloat(trade.answers.reward) || 0;
+      const tpReward = parseFloat(trade.answers.reward) || 0;
+      const partialReward = parseFloat(trade.answers.partial_reward) || 0;
+      const isSafeRuleYes = trade.answers.safe_rule === 'Тийм';
+      
+      // Calculate total reward: TP + Partial (if safe rule followed)
+      const reward = isSafeRuleYes ? tpReward + partialReward : tpReward;
+      
       const rr = parseFloat(trade.answers.risk_reward) || 0;
       const isWin = trade.answers.result === 'Win';
 

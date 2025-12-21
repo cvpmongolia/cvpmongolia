@@ -1,4 +1,4 @@
-// ============================================
+﻿// ============================================
 // TRADING JOURNAL MODULE
 // ============================================
 
@@ -141,14 +141,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -287,14 +287,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -507,14 +507,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -720,14 +720,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -878,14 +878,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -1028,14 +1028,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -1178,14 +1178,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -1335,14 +1335,14 @@ const QUESTION_SETS = {
     },
     {
       id: 'reward',
-      label: 'Reward',
+      label: 'TP хүрсэн Reward',
       type: 'number',
       optional: true,
       placeholder: '300$, 500$'
     },
     {
       id: 'risk_reward',
-      label: 'R/R',
+      label: 'R:R',
       type: 'number',
       optional: true
     },
@@ -1963,51 +1963,63 @@ function showQuestionnaire(entry = null) {
   resultGroup.appendChild(resultQ);
   questionsWrapper.appendChild(resultGroup);
   
-  // Add auto-calculation listeners for Risk, Reward, and R/R
+  // Add auto-calculation listeners for Risk, Reward, and R:R
   setTimeout(() => {
     const riskInput = form.querySelector('input[name="risk"]');
     const rewardInput = form.querySelector('input[name="reward"]');
     const rrInput = form.querySelector('input[name="risk_reward"]');
+    const partialRewardInput = form.querySelector('input[name="partial_reward"]');
+    
+    // Helper function to calculate total reward
+    const getTotalReward = () => {
+      const fullTPReward = parseFloat(rewardInput?.value) || 0;
+      const partialReward = parseFloat(partialRewardInput?.value) || 0;
+      const safeRuleInput = form.querySelector('input[name="safe_rule"]:checked');
+      const isSafeRuleYes = safeRuleInput?.value === 'Тийм';
+      
+      // Only add partial reward if safe rule is Yes
+      return isSafeRuleYes ? fullTPReward + partialReward : fullTPReward;
+    };
+    
+    // Helper function to update R:R display
+    const updateRR = () => {
+      const risk = parseFloat(riskInput?.value) || 0;
+      const totalReward = getTotalReward();
+      
+      // Check if reward input is empty or 0
+      const isRewardEmpty = !rewardInput?.value || rewardInput?.value === '' || parseFloat(rewardInput?.value) === 0;
+      
+      if (risk > 0 && totalReward > 0 && !isRewardEmpty) {
+        rrInput.value = (totalReward / risk).toFixed(2);
+      } else {
+        rrInput.value = '';
+      }
+    };
     
     if (riskInput && rewardInput && rrInput) {
+      // Update R:R when risk changes
       riskInput.addEventListener('input', () => {
-        const risk = parseFloat(riskInput.value);
-        const rr = parseFloat(rrInput.value);
-        const reward = parseFloat(rewardInput.value);
-        
-        if (risk && rr && !rewardInput.dataset.userInput) {
-          rewardInput.value = (risk * rr).toFixed(2);
-        } else if (risk && reward && !rrInput.dataset.userInput) {
-          rrInput.value = (reward / risk).toFixed(2);
-        }
+        updateRR();
       });
       
+      // Update R:R when full TP reward changes
       rewardInput.addEventListener('input', () => {
-        rewardInput.dataset.userInput = 'true';
-        const risk = parseFloat(riskInput.value);
-        const reward = parseFloat(rewardInput.value);
-        const rr = parseFloat(rrInput.value);
-        
-        if (risk && reward && !rrInput.dataset.userInput) {
-          rrInput.value = (reward / risk).toFixed(2);
-        } else if (reward && rr && !riskInput.dataset.userInput) {
-          riskInput.value = (reward / rr).toFixed(2);
-        }
-        setTimeout(() => delete rewardInput.dataset.userInput, 100);
+        updateRR();
       });
       
-      rrInput.addEventListener('input', () => {
-        rrInput.dataset.userInput = 'true';
-        const risk = parseFloat(riskInput.value);
-        const rr = parseFloat(rrInput.value);
-        const reward = parseFloat(rewardInput.value);
-        
-        if (risk && rr && !rewardInput.dataset.userInput) {
-          rewardInput.value = (risk * rr).toFixed(2);
-        } else if (reward && rr && !riskInput.dataset.userInput) {
-          riskInput.value = (reward / rr).toFixed(2);
-        }
-        setTimeout(() => delete rrInput.dataset.userInput, 100);
+      // Update R:R when partial reward changes
+      if (partialRewardInput) {
+        partialRewardInput.addEventListener('input', () => {
+          updateRR();
+        });
+      }
+      
+      // Update R:R when safe rule changes
+      const safeRuleInputs = form.querySelectorAll('input[name="safe_rule"]');
+      safeRuleInputs.forEach(input => {
+        input.addEventListener('change', () => {
+          updateRR();
+        });
       });
     }
   }, 100);
@@ -2302,8 +2314,9 @@ function setupRewardReminder() {
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0 text-2xl">💡</div>
         <div class="flex-1">
-          <p class="font-semibold text-sm mb-1">TP хүрсэн арилжааны сануулга</p>
-          <p class="text-xs leading-relaxed">Safe-ийн дүрмийн дагуу 1:1RR-тай хаасан тал арилжааны ашгийг бүтэн TP хүрсэн ашигтай нэмж тооцож <span class="font-bold text-yellow-300 bg-yellow-300/20 px-1 rounded">Reward талбарт</span> гараар оруулна уу. Энэ нь таны ашгийн тайланг нарийвчлалтай гаргахад туслана.</p>
+          <p class="font-semibold text-sm mb-1">🎉🥳Таны арилжаа TP хүрсэн байна.</p>
+          <p class="text-xs leading-relaxed">Safe-ийн дүрмээр хаасан тал ашгаа оруулна уу.</p> <p class="text-xs leading-relaxed">Эцсийн <span class="font-bold text-yellow-300 bg-yellow-300/20 px-1 rounded">R:R</span> автоматаар тооцогдоно.</p>
+          <p id="total-reward-message" class="text-xs leading-relaxed mt-2 hidden"></p>
         </div>
         <button class="flex-shrink-0 text-white/80 hover:text-white transition-colors" onclick="
           const notif = document.getElementById('reward-reminder-notification');
@@ -2320,18 +2333,16 @@ function setupRewardReminder() {
     document.body.appendChild(notification);
   }
   
-  // Function to check and show/hide notification and highlight Reward label
+  // Function to check and show/hide notification
   const checkAndNotify = () => {
     const resultInput = form.querySelector('input[name="result"]:checked');
     const safeRuleInput = form.querySelector('input[name="safe_rule"]:checked');
+    const fullTPRewardInput = form.querySelector('input[name="reward"]');
+    const partialRewardInput = form.querySelector('input[name="partial_reward"]');
+    const totalRewardMessage = document.getElementById('total-reward-message');
     
     const isWin = resultInput?.value === 'Win';
     const isSafeRuleYes = safeRuleInput?.value === 'Тийм';
-    
-    // Find the Reward label
-    const rewardLabel = Array.from(form.querySelectorAll('h4')).find(label => 
-      label.textContent.includes('Reward')
-    );
     
     if (isWin && isSafeRuleYes) {
       // Fade in notification with slide down
@@ -2339,9 +2350,16 @@ function setupRewardReminder() {
       notification.style.transform = 'translateY(0)';
       notification.style.pointerEvents = 'auto';
       
-      // Highlight Reward label
-      if (rewardLabel) {
-        rewardLabel.classList.add('font-bold', 'text-yellow-300', 'bg-yellow-300/20', 'px-1', 'rounded');
+      // Update total reward message if both rewards have values
+      const fullTPReward = parseFloat(fullTPRewardInput?.value) || 0;
+      const partialReward = parseFloat(partialRewardInput?.value) || 0;
+      
+      if (fullTPReward > 0 && partialReward > 0 && totalRewardMessage) {
+        const totalReward = fullTPReward + partialReward;
+        totalRewardMessage.textContent = `Энэ арилжааны нийлмэл ашиг: $${totalReward.toFixed(2)}`;
+        totalRewardMessage.classList.remove('hidden');
+      } else if (totalRewardMessage) {
+        totalRewardMessage.classList.add('hidden');
       }
     } else {
       // Fade out notification with slide up
@@ -2349,9 +2367,9 @@ function setupRewardReminder() {
       notification.style.transform = 'translateY(-10px)';
       notification.style.pointerEvents = 'none';
       
-      // Remove highlight from Reward label
-      if (rewardLabel) {
-        rewardLabel.classList.remove('font-bold', 'text-yellow-300', 'bg-yellow-300/20', 'px-1', 'rounded');
+      // Hide total reward message
+      if (totalRewardMessage) {
+        totalRewardMessage.classList.add('hidden');
       }
     }
   };
@@ -2367,6 +2385,20 @@ function setupRewardReminder() {
   safeRuleInputs.forEach(input => {
     input.addEventListener('change', checkAndNotify);
   });
+  
+  // Add listeners to reward inputs to update total reward message
+  setTimeout(() => {
+    const fullTPRewardInput = form.querySelector('input[name="reward"]');
+    const partialRewardInput = form.querySelector('input[name="partial_reward"]');
+    
+    if (fullTPRewardInput) {
+      fullTPRewardInput.addEventListener('input', checkAndNotify);
+    }
+    
+    if (partialRewardInput) {
+      partialRewardInput.addEventListener('input', checkAndNotify);
+    }
+  }, 100);
   
   // Initial check with slight delay to allow fade-in transition
   requestAnimationFrame(() => {
@@ -2587,6 +2619,11 @@ function createQuestionGroup(question, questionNumber, titleColor = null) {
     label.style.color = titleColor;
   }
   
+  // Add permanent golden style to Reward label
+  if (question.id === 'reward') {
+    label.classList.add('font-bold', 'text-yellow-300', 'bg-yellow-300/20', 'px-1', 'rounded');
+  }
+  
   // Process label text - handle ${direction} replacement for BLOCK_ZONE
   let labelText = question.label;
   if (labelText.includes('${direction}')) {
@@ -2634,8 +2671,18 @@ function createQuestionGroup(question, questionNumber, titleColor = null) {
     input.name = question.id;
     input.step = '0.1';
     input.min = '0';
-    input.className = 'w-full px-4 py-2 bg-white/10 text-white rounded-lg border-2 border-white/30 focus:border-blue-500 focus:outline-none';
-    input.placeholder = question.placeholder || 'Автоматаар тооцогдоно. Жишээ: 2, 3, 1.5';
+    
+    // Make R:R field non-interactable
+    if (question.id === 'risk_reward') {
+      input.disabled = true;
+      input.className = 'w-full px-4 py-2 bg-white/10 text-white rounded-lg border-2 border-white/30 opacity-70 cursor-not-allowed';
+      input.placeholder = 'Автоматаар тооцогдоно';
+      input.title = 'Автоматаар тооцогдоно';
+    } else {
+      input.className = 'w-full px-4 py-2 bg-white/10 text-white rounded-lg border-2 border-white/30 focus:border-blue-500 focus:outline-none';
+      input.placeholder = question.placeholder || 'Автоматаар тооцогдоно. Жишээ: 2, 3, 1.5';
+    }
+    
     wrapper.appendChild(input);
   } else if (question.type === 'text') {
     const textarea = document.createElement('textarea');
@@ -2686,7 +2733,105 @@ function createQuestionGroup(question, questionNumber, titleColor = null) {
       radioGroup.appendChild(label);
     });
     
-    wrapper.appendChild(radioGroup);
+    // Add partial reward input inline for safe_rule question
+    if (question.id === 'safe_rule') {
+      // Create a flex container to hold both radio buttons and partial reward input
+      const flexContainer = document.createElement('div');
+      flexContainer.className = 'flex flex-wrap items-center gap-3';
+      
+      // Move radioGroup into flexContainer
+      flexContainer.appendChild(radioGroup);
+      
+      // Create partial reward wrapper
+      const partialRewardWrapper = document.createElement('div');
+      partialRewardWrapper.className = 'flex items-center gap-2 hidden';
+      partialRewardWrapper.id = 'partial-reward-wrapper';
+      
+      const partialRewardLabel = document.createElement('label');
+      partialRewardLabel.className = 'text-sm font-normal text-white whitespace-nowrap';
+      partialRewardLabel.textContent = 'Тал ашиг:';
+      
+      const partialRewardInput = document.createElement('input');
+      partialRewardInput.type = 'number';
+      partialRewardInput.name = 'partial_reward';
+      partialRewardInput.step = '0.1';
+      partialRewardInput.min = '0';
+      partialRewardInput.className = 'w-48 px-4 py-2 bg-white/10 text-white rounded-lg border-2 border-yellow-300/50 focus:border-yellow-300 focus:outline-none';
+      partialRewardInput.placeholder = 'Тал ашиг оруулах.';
+      
+      partialRewardWrapper.appendChild(partialRewardLabel);
+      partialRewardWrapper.appendChild(partialRewardInput);
+      flexContainer.appendChild(partialRewardWrapper);
+      
+      wrapper.appendChild(flexContainer);
+      
+      // Add event listeners to show/hide partial reward input
+      question.options.forEach((option) => {
+        const optionRadio = flexContainer.querySelector(`input[value="${option}"]`);
+        if (optionRadio) {
+          optionRadio.addEventListener('change', () => {
+            const form = document.getElementById('journal-questionnaire-form');
+            const resultInput = form?.querySelector('input[name="result"]:checked');
+            const isNotLoss = !resultInput || resultInput.value !== 'Loss';
+            
+            if (option === 'Тийм' && optionRadio.checked && isNotLoss) {
+              partialRewardWrapper.classList.remove('hidden');
+              
+              // Auto-fill with half of Risk value (1:1 on half position)
+              const riskInput = form?.querySelector('input[name="risk"]');
+              const riskValue = parseFloat(riskInput?.value);
+              
+              if (riskValue && riskValue > 0 && !partialRewardInput.value) {
+                const halfRisk = riskValue / 2;
+                // Format based on whether the half risk value is a whole number or decimal
+                partialRewardInput.value = halfRisk % 1 === 0 ? halfRisk.toString() : halfRisk.toFixed(2);
+              }
+            } else if (option === 'Үгүй' && optionRadio.checked) {
+              partialRewardWrapper.classList.add('hidden');
+              partialRewardInput.value = '';
+            }
+          });
+        }
+      });
+    } else {
+      // For non-safe_rule questions, just append radioGroup normally
+      wrapper.appendChild(radioGroup);
+    }
+    
+    // Add result change listener to hide partial reward on Loss
+    if (question.id === 'result') {
+      const resultRadios = radioGroup.querySelectorAll('input[name="result"]');
+      resultRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const form = document.getElementById('journal-questionnaire-form');
+          const partialRewardWrapper = form?.querySelector('#partial-reward-wrapper');
+          const partialRewardInput = form?.querySelector('input[name="partial_reward"]');
+          const safeRuleInput = form?.querySelector('input[name="safe_rule"]:checked');
+          
+          if (radio.value === 'Loss' && radio.checked) {
+            // Hide partial reward field if result is Loss
+            if (partialRewardWrapper) {
+              partialRewardWrapper.classList.add('hidden');
+              if (partialRewardInput) partialRewardInput.value = '';
+            }
+          } else if (safeRuleInput?.value === 'Тийм') {
+            // Show partial reward field if not Loss and safe rule is Yes
+            if (partialRewardWrapper) {
+              partialRewardWrapper.classList.remove('hidden');
+              
+              // Auto-fill with half of risk value (1:1 on half position)
+              const riskInput = form?.querySelector('input[name="risk"]');
+              const riskValue = parseFloat(riskInput?.value) || 0;
+              if (riskValue > 0 && partialRewardInput && !partialRewardInput.value) {
+                const halfRisk = riskValue / 2;
+                // Format based on whether the half risk value is a whole number or decimal
+                partialRewardInput.value = halfRisk % 1 === 0 ? halfRisk.toString() : halfRisk.toFixed(2);
+              }
+            }
+          }
+        });
+      });
+    }
   }
   
   return wrapper;
@@ -3275,6 +3420,12 @@ function saveTradeEntry() {
     
     alert('Улаанаар * тэмдэглэгдсэн бүх асуултад хариулна уу.');
     return;
+  }
+  
+  // Store partial reward separately - do NOT combine with answers.reward
+  const partialRewardInput = form.querySelector('input[name="partial_reward"]');
+  if (partialRewardInput && partialRewardInput.value) {
+    answers.partial_reward = partialRewardInput.value;
   }
   
   // Calculate score
