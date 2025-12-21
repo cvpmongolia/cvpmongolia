@@ -2183,6 +2183,14 @@ function showQuestionnaire(entry = null) {
         }
       }
     });
+    
+    // Set partial_reward separately (not in QUESTIONS array)
+    if (entry.answers.partial_reward) {
+      const partialRewardInput = form.querySelector('input[name="partial_reward"]');
+      if (partialRewardInput) {
+        partialRewardInput.value = entry.answers.partial_reward;
+      }
+    }
   }
   
   // Update journal title based on mode
