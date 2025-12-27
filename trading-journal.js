@@ -219,7 +219,7 @@ const QUESTION_SETS = {
     },
     {
       id: 'q_test_impulse',
-      label: 'Тестийн lvl үүсгэсэсэн Impulse Profile Хүлээлт',
+      label: 'Тестийн lvl үүсгэсэн Impulse Profile Хүлээлт',
       type: 'radio',
       options: ['Long', 'Short', 'Ойлгомжгүй'],
       default: null
