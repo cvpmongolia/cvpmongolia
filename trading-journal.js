@@ -3484,7 +3484,7 @@ function renderJournalList() {
   if (!container) return;
   
   if (journalEntries.length === 0) {
-    container.innerHTML = '<p class="text-white/50 text-center py-8">Арилжааны түүх байхгүй байна</p>';
+    container.innerHTML = '<p class="text-white/50 text-center py-8">Арилжааны түүх байхгүй байна. "+ Нэмэх" товч дээр дарж хийсэн арилжаагаа бүртгээрэй.</p>';
     return;
   }
   
