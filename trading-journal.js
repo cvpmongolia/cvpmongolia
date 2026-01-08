@@ -2369,7 +2369,7 @@ function setupRewardReminder() {
       
       if (fullTPReward > 0 && partialReward > 0 && totalRewardMessage) {
         const totalReward = fullTPReward + partialReward;
-        totalRewardMessage.textContent = `Энэ арилжааны нийлмэл ашиг: $${totalReward.toFixed(2)}`;
+        totalRewardMessage.innerHTML = `Энэ арилжааны нийлмэл ашиг: <span class="font-bold text-lg text-green-400 bg-green-400/20 px-1 rounded">$${totalReward.toFixed(2)}</span>`;
         totalRewardMessage.classList.remove('hidden');
       } else if (totalRewardMessage) {
         totalRewardMessage.classList.add('hidden');
