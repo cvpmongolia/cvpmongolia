@@ -1974,6 +1974,7 @@ function showQuestionnaire(entry = null) {
     const rewardInput = form.querySelector('input[name="reward"]');
     const rrInput = form.querySelector('input[name="risk_reward"]');
     const partialRewardInput = form.querySelector('input[name="partial_reward"]');
+    const calcFromPartialBtn = form.querySelector('#calc-from-partial-reward-btn');
     
     // Helper function to calculate total reward
     const getTotalReward = () => {
@@ -2001,10 +2002,55 @@ function showQuestionnaire(entry = null) {
       }
     };
     
+    // Track partial reward changes
+    let partialRewardJustChanged = false;
+    
+    // Helper function to check if calc-from-partial button should be visible
+    const updateCalcFromPartialButton = () => {
+      if (!calcFromPartialBtn || !partialRewardInput || !riskInput) return;
+      
+      const riskValue = parseFloat(riskInput.value) || 0;
+      const partialRewardValue = parseFloat(partialRewardInput.value) || 0;
+      const safeRuleInput = form.querySelector('input[name="safe_rule"]:checked');
+      const resultInput = form.querySelector('input[name="result"]:checked');
+      
+      const isSafeRuleYes = safeRuleInput?.value === 'Тийм';
+      const isNotLoss = !resultInput || resultInput.value !== 'Loss';
+      const isRiskEmpty = riskValue === 0 || !riskInput.value;
+      const hasPartialReward = partialRewardValue > 0;
+      
+      // Show button if:
+      // 1. (risk is empty/0 OR partial reward just changed) AND
+      // 2. partial reward has value AND
+      // 3. safe rule is Yes AND
+      // 4. result is not Loss
+      if ((isRiskEmpty || partialRewardJustChanged) && hasPartialReward && isSafeRuleYes && isNotLoss) {
+        calcFromPartialBtn.classList.remove('hidden');
+      } else {
+        calcFromPartialBtn.classList.add('hidden');
+      }
+    };
+    
+    // Add click handler for calc-from-partial button
+    if (calcFromPartialBtn && partialRewardInput && riskInput) {
+      calcFromPartialBtn.addEventListener('click', () => {
+        const partialRewardValue = parseFloat(partialRewardInput.value) || 0;
+        if (partialRewardValue > 0) {
+          const calculatedRisk = partialRewardValue * 2;
+          riskInput.value = calculatedRisk % 1 === 0 ? calculatedRisk.toString() : calculatedRisk.toFixed(2);
+          updateRR();
+          partialRewardJustChanged = false; // Reset flag after calculation
+          updateCalcFromPartialButton();
+        }
+      });
+    }
+    
     if (riskInput && rewardInput && rrInput) {
       // Update R:R when risk changes
       riskInput.addEventListener('input', () => {
         updateRR();
+        partialRewardJustChanged = false; // Reset flag when risk is manually changed
+        updateCalcFromPartialButton();
       });
       
       // Update R:R when full TP reward changes
@@ -2016,6 +2062,8 @@ function showQuestionnaire(entry = null) {
       if (partialRewardInput) {
         partialRewardInput.addEventListener('input', () => {
           updateRR();
+          partialRewardJustChanged = true; // Set flag when partial reward changes
+          updateCalcFromPartialButton();
         });
       }
       
@@ -2024,8 +2072,20 @@ function showQuestionnaire(entry = null) {
       safeRuleInputs.forEach(input => {
         input.addEventListener('change', () => {
           updateRR();
+          updateCalcFromPartialButton();
         });
       });
+      
+      // Update button visibility when result changes
+      const resultInputs = form.querySelectorAll('input[name="result"]');
+      resultInputs.forEach(input => {
+        input.addEventListener('change', () => {
+          updateCalcFromPartialButton();
+        });
+      });
+      
+      // Initial check for button visibility
+      updateCalcFromPartialButton();
     }
   }, 100);
   
@@ -2650,6 +2710,17 @@ function createQuestionGroup(question, questionNumber, titleColor = null) {
   // Add red asterisk for required questions
   const asterisk = question.optional ? '' : ' <span style="color: #fb7185;">*</span>';
   label.innerHTML = `${questionNumber}. ${labelText}${asterisk}`;
+  
+  // Add calculate-from-partial-reward button for Risk field
+  if (question.id === 'risk') {
+    const calcButton = document.createElement('button');
+    calcButton.type = 'button';
+    calcButton.className = 'ml-2 -mt-1 px-2 py-1 text-xs  bg-amber-500 hover:bg-amber-600 text-white rounded transition-all hidden';
+    calcButton.id = 'calc-from-partial-reward-btn';
+    calcButton.textContent = 'тооцоолох';
+    calcButton.title = 'Тал ашгаас тооцоолох (Risk = Тал ашиг × 2)';
+    label.appendChild(calcButton);
+  }
   
   const scoreIndicator = document.createElement('span');
   scoreIndicator.className = 'text-sm font-normal opacity-0 transition-opacity';
